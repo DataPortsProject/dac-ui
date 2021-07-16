@@ -102,7 +102,8 @@ export default {
     publish_subscribeDescription: 'Agent to send the data to ORION',
     on_demandDescription: 'Agent that will send the data to a Callback URL',
     containerName_characteristics: 'The name of the container must be in lower case. No spaces or special characters. It can contain numbers.',
-    downloadingTemplate: 'Downloading template'
+    downloadingTemplate: 'Downloading template',
+    imageImported: 'imageImported'
   },
   'datasourceList': {
     'idTableColumn': 'Id',
@@ -146,5 +147,20 @@ export default {
     mandatoryProperties: 'These properties are mandatory: ',
     description_api_agentType: 'Connector / Agent whose data source will be an API',
     description_local_txt_file_agentType: 'Connector / Agent whose data source will be a local txt file'
+  },
+  overview: {
+    notifications: 'Notifications',
+    tableColumnType: 'Type',
+    tableColumnMessage: 'Message',
+    tableColumnCreated: 'Created',
+    deleteNotification: 'Delete Notification',
+    deleteNotificationDialogTitle: 'Delete Notification',
+    'deleteNotificationDialogQuestion': 'Are you sure you want to delete this notification?',
+    deletedNotification: 'Notification deleted successfully',
+    deleteAllNotifications: 'Delete all notifications',
+    deleteAllNotificationDialogTitle: 'Delete all notifications',
+    deleteAllNotificationDialogQuestion: 'Are you sure you want to delete all the notifications?',
+    deletedNotifications: 'Notifications deleted successfully',
+    tableColumnContainerName: 'Container name'
   }
 }

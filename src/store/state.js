@@ -1,5 +1,11 @@
 
 // Defining the state data here
 export default {
-  resources: {}
+  resources: {},
+  // SOCKETS
+  socket: {
+    isConnected: false,
+    message: '',
+    reconnectError: false
+  }
 }

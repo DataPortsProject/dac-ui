@@ -85,8 +85,8 @@
             <el-button
               size="small"
               class="editBtn"
-              @click="inspectAgent(row)"
               :disabled="disableButtons"
+              @click="inspectAgent(row)"
             >
               <i class="el-icon-edit">{{ $t("containerList.inspectAgent") }}</i>
             </el-button>
@@ -96,8 +96,8 @@
             <el-button
               size="small"
               class="viewLogBtn"
-              @click="openAgentLogDialog(row.Names[0].toString(), row.Id)"
               :disabled="disableButtons"
+              @click="openAgentLogDialog(row.Names[0].toString(), row.Id)"
             >
               <i class="el-icon-view"> {{ $t("containerList.viewLog") }} </i>
             </el-button>
@@ -108,8 +108,8 @@
               v-if="row.StatusCode === 'up'"
               size="small"
               class="stopBtn"
-              @click="stopAgent(row.Id, 'stopped')"
               :disabled="disableButtons"
+              @click="stopAgent(row.Id, 'stopped')"
             >
               <i class="el-icon-video-pause">{{
                 $t("containerList.stopAgent")
@@ -122,8 +122,8 @@
               v-if="row.StatusCode === 'exited'"
               size="small"
               class="stopBtn"
-              @click="startAgent(row.Id)"
               :disabled="disableButtons"
+              @click="startAgent(row.Id)"
             >
               <i class="el-icon-video-play">{{
                 $t("containerList.startAgent")
@@ -135,8 +135,8 @@
             <el-button
               size="small"
               class="deleteBtn"
-              @click="showDeleteDialog(row.Id, row.ImageID)"
               :disabled="disableButtons || row.StatusCode !== 'exited'"
+              @click="showDeleteDialog(row.Id, row.ImageID)"
             >
               <i class="el-icon-delete-solid">{{
                 $t("containerList.deleteAgent")
@@ -162,11 +162,11 @@
       :title="$t('containerList.inspectingAgent')"
     >
       <el-tabs
+        v-model="mainTab"
         dark
         slider-color="green"
         centered
         color="green"
-        v-model="mainTab"
         @tab-click="refreshJsonEditor++"
       >
         <el-tab-pane label="Agent" name="metadataContent">
@@ -175,9 +175,9 @@
           </el-card>
         </el-tab-pane>
         <el-tab-pane
+          :key="refreshJsonEditor"
           label="Datamodel"
           name="datamodelContent"
-          :key="refreshJsonEditor"
         >
           <el-card class="box-card">
             <json-editor ref="jsonDatamodel" v-model="dataModelContent" />
@@ -250,9 +250,9 @@
 </template>
 
 <script>
-import waves from "@/directive/waves"; // waves directive
-import Pagination from "@/components/Pagination"; // secondary package based on
-import JsonEditor from "@/components/JsonEditor";
+import waves from '@/directive/waves' // waves directive
+import Pagination from '@/components/Pagination' // secondary package based on
+import JsonEditor from '@/components/JsonEditor'
 import {
   getAgents,
   inspectAgentById,
@@ -260,68 +260,64 @@ import {
   startAgent,
   deleteAgent,
   getLog
-} from "@/api/agents_API";
-import { getImages, getDataSource } from "@/api/images_API";
+} from '@/api/agents_API'
+import { getImages, getDataSource } from '@/api/images_API'
 import {
   deleteORIONEntities,
   getData,
   checkORIONDatasource
-} from "@/api/orion_API";
-import metadata from "./metadata.json";
+} from '@/api/orion_API'
 
 /* Sin usar de momento*/
 /* import dataportsConstants from '@/utils/constants'; */
 
 export default {
-  name: "ContainerList",
+  name: 'ContainerList',
   components: { JsonEditor, Pagination },
   directives: { waves },
   data() {
     return {
       bgc: {
-        backgroundColor: "rgb(240,242,245)",
-        height: "100%",
-        width: "100%"
+        backgroundColor: 'rgb(240,242,245)',
+        height: '100%',
+        width: '100%'
       },
       listQuery: {
-        categorySelected: "",
+        categorySelected: '',
         page: 1,
         limit: 5,
         id: undefined
       },
       listLoading: true,
-      searchText: "",
+      searchText: '',
       list: [],
       total: 0,
       metadataContent: null,
       dataModelContent: null,
       viewMetaDataDialog: false,
-      requiredText: "",
-      containerStatus: "",
+      requiredText: '',
+      containerStatus: '',
       tableKey: 0,
-      agentToDelete: "",
-      imageID: "",
+      agentToDelete: '',
+      imageID: '',
       deleteDialog: false,
       disableButtons: false,
       refreshJsonEditor: 0,
-      mainTab: "metadataContent",
+      mainTab: 'metadataContent',
 
-      agentLog: "",
+      agentLog: '',
       logDialog: false,
-      agentLogName: "",
+      agentLogName: '',
       agentLogId: null,
       noDate: true,
-      logDate: "",
-    };
+      logDate: ''
+    }
   },
   computed: {
-    metadataInformation() {
-      return metadata;
-    },
 
     filteredContainersByPagination() {
-      const page = this.listQuery.page;
-      const limit = this.listQuery.limit;
+      const page = this.listQuery.page
+      const limit = this.listQuery.limit
 
       if (
         Math.ceil(this.filteredContainersBySearchTextLength / limit) >= page
@@ -329,9 +325,9 @@ export default {
         return this.filteredContainersBySearchText.slice(
           (page - 1) * limit,
           page * limit
-        );
+        )
       } else {
-        return this.filteredContainersBySearchText.slice(0, limit);
+        return this.filteredContainersBySearchText.slice(0, limit)
       }
     },
 
@@ -341,237 +337,237 @@ export default {
           .toString()
           .toLowerCase()
           .includes(this.searchText.toLowerCase())
-      );
+      )
     },
 
     filteredContainersBySearchTextLength() {
-      return this.filteredContainersBySearchText.length;
+      return this.filteredContainersBySearchText.length
     },
 
     getDeleteAgentDialogTitle() {
-      return this.$t("containerList.deleteAgentDialogTitle");
+      return this.$t('containerList.deleteAgentDialogTitle')
     },
 
     getNameTableColumn() {
-      return this.$t("containerList.nameTableColumn");
+      return this.$t('containerList.nameTableColumn')
     },
 
     getImageTableColumn() {
-      return this.$t("containerList.imageTableColumn");
+      return this.$t('containerList.imageTableColumn')
     },
 
     getStatusTableColumn() {
-      return this.$t("containerList.statusTableColumn");
+      return this.$t('containerList.statusTableColumn')
     },
 
     getActionsTableColumn() {
-      return this.$t("containerList.actionsTableColumn");
+      return this.$t('containerList.actionsTableColumn')
     }
   },
 
   watch: {
     lang() {
-      this.commonTranslation();
+      this.commonTranslation()
     }
   },
 
   created() {
-    this.getList();
-    this.commonTranslation();
+    this.getList()
+    this.commonTranslation()
   },
 
   methods: {
     commonTranslation() {
-      this.requiredText = " required";
+      this.requiredText = ' required'
     },
 
     async getList() {
-      this.listQuery.categorySelected = this.category;
-      this.listLoading = true;
+      this.listQuery.categorySelected = this.category
+      this.listLoading = true
       await getAgents().then(response => {
-        let agents = [];
+        const agents = []
         response.message.forEach(e => {
-          if (e.AgentType !== "on_demand" && e.AgentType !== "") {
-            agents.push(e);
+          if (e.AgentType !== 'on_demand' && e.AgentType !== '') {
+            agents.push(e)
           }
-        });
-        this.list = agents;
-        this.total = this.list.length;
+        })
+        this.list = agents
+        this.total = this.list.length
         setTimeout(() => {
-          this.listLoading = false;
-        }, 1.5 * 1000);
-      });
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
     },
 
     showDeleteDialog(id, imageID) {
-      this.deleteDialog = true;
-      this.agentToDelete = id;
-      this.imageID = imageID;
+      this.deleteDialog = true
+      this.agentToDelete = id
+      this.imageID = imageID
     },
 
     hideDeleteDialog() {
-      this.deleteDialog = false;
-      this.agentToDelete = "";
-      this.imageID = "";
+      this.deleteDialog = false
+      this.agentToDelete = ''
+      this.imageID = ''
     },
 
     handleFilter() {},
 
     /* Inspeccionar agente */
     async inspectAgent(row) {
-      this.metadataContent = "";
-      this.dataModelContent = "";
-      const _this = this;
+      this.metadataContent = ''
+      this.dataModelContent = ''
+      const _this = this
       const metadataContent = await inspectAgentById(row.Id).then(response => {
-        _this.metadataContent = response.message;
-      });
+        _this.metadataContent = response.message
+      })
 
       const dataModelContent = await getDataSource(row.ImageID).then(
         response => {
-          _this.dataModelContent = JSON.parse(response.message.dataSource);
+          _this.dataModelContent = JSON.parse(response.message.dataSource)
         }
-      );
+      )
 
-      //this.viewMetadataContent(metadataContent);
-      //this.viewDataModelContent(dataModelContent);
+      // this.viewMetadataContent(metadataContent);
+      // this.viewDataModelContent(dataModelContent);
 
-      this.viewMetaDataDialog = true;
+      this.viewMetaDataDialog = true
     },
 
     viewMetadataContent(metadata) {
-      this.metadataContent = metadata;
+      this.metadataContent = metadata
     },
 
     viewDataModelContent(datamodel) {
-      const obj = JSON.parse(datamodel);
-      this.dataModelContent = obj;
+      const obj = JSON.parse(datamodel)
+      this.dataModelContent = obj
     },
 
     closeMetadataDialog() {
-      this.mainTab = "metadataContent";
-      this.viewMetaDataDialog = false;
+      this.mainTab = 'metadataContent'
+      this.viewMetaDataDialog = false
     },
 
     closeAgentLogDialog() {
-      this.logDialog = false;
-      this.agentLogName = "";
-      this.agentLogId = null;
-      this.noDate = true;
-      this.logDate = '';
+      this.logDialog = false
+      this.agentLogName = ''
+      this.agentLogId = null
+      this.noDate = true
+      this.logDate = ''
     },
 
     openAgentLogDialog(agentName, agentId) {
-      this.logDialog = true;
-      this.agentLogName = agentName;
-      this.agentLogId = agentId;
+      this.logDialog = true
+      this.agentLogName = agentName
+      this.agentLogId = agentId
     },
 
     /* Descargar el log del agente */
     async recoverAgentLog() {
-      this.disableButtons = true;
-      this.listLoading = true;
+      this.disableButtons = true
+      this.listLoading = true
 
-      const since = !this.noDate && this.logDate !== '' ? (this.logDate.getTime() / 1000).toFixed(0) : '';
-      console.log('UNIX TIMESTAMP', since);
+      const since = !this.noDate && this.logDate !== '' ? (this.logDate.getTime() / 1000).toFixed(0) : ''
+      console.log('UNIX TIMESTAMP', since)
 
       await getLog(this.agentLogId, since).then(
         response => {
-          this.downloadTxt(`${this.agentLogName}-log`, response.message);
+          this.downloadTxt(`${this.agentLogName}-log`, response.message)
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("containerList.logDownloaded"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('containerList.logDownloaded'),
+            type: 'success',
             duration: 2000
-          });
-          this.listLoading = false;
+          })
+          this.listLoading = false
         },
         error => {
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
-          this.listLoading = false;
+          })
+          this.listLoading = false
         }
-      );
-      this.disableButtons = false;
+      )
+      this.disableButtons = false
     },
 
     downloadTxt(filename, text) {
-      var element = document.createElement("a");
+      var element = document.createElement('a')
       element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(text)
-      );
-      element.setAttribute("download", filename);
+        'href',
+        'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+      )
+      element.setAttribute('download', filename)
 
-      element.style.display = "none";
-      document.body.appendChild(element);
+      element.style.display = 'none'
+      document.body.appendChild(element)
 
-      element.click();
+      element.click()
 
-      document.body.removeChild(element);
+      document.body.removeChild(element)
     },
 
     /* Parar el agente */
     async stopAgent(agentId) {
-      this.disableButtons = true;
-      this.listLoading = true;
+      this.disableButtons = true
+      this.listLoading = true
       await stopAgent(agentId).then(
         response => {
-          this.tableKey++;
+          this.tableKey++
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("containerList.containerStopped"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('containerList.containerStopped'),
+            type: 'success',
             duration: 2000
-          });
-          this.listLoading = false;
-          this.getList();
+          })
+          this.listLoading = false
+          this.getList()
         },
         error => {
-          this.tableKey++;
+          this.tableKey++
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
-          this.listLoading = false;
+          })
+          this.listLoading = false
         }
-      );
-      this.disableButtons = false;
+      )
+      this.disableButtons = false
     },
 
     /* Arrancar agente */
     async startAgent(agentId) {
-      this.disableButtons = true;
-      this.listLoading = true;
+      this.disableButtons = true
+      this.listLoading = true
       await startAgent(agentId).then(
         response => {
-          this.tableKey++;
+          this.tableKey++
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("containerList.containerStarted"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('containerList.containerStarted'),
+            type: 'success',
             duration: 2000
-          });
-          this.listLoading = false;
-          this.getList();
+          })
+          this.listLoading = false
+          this.getList()
         },
         error => {
-          this.tableKey++;
+          this.tableKey++
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
-          this.listLoading = false;
+          })
+          this.listLoading = false
         }
-      );
-      this.disableButtons = false;
+      )
+      this.disableButtons = false
     },
 
     /* Borrar agente */
@@ -582,43 +578,43 @@ export default {
           // El id de las entidades siempre son iguales. Al ser un agente pub-sub es de tipo AgentContainer +  id_imagen
 
           var agentContainerToRemove =
-            "urn:ngsi-ld:AgentContainer:" + this.imageID;
+            'urn:ngsi-ld:AgentContainer:' + this.imageID
           // Borramos la entidad AgentContainer
           await deleteORIONEntities(agentContainerToRemove).then(response =>
             console.log(response)
-          );
+          )
 
           // Una vez borradas ambas entidades se vacia la property imageID
-          this.tableKey++;
-          this.imageID = "";
-          this.deleteDialog = false;
-          this.agentToDelete = "";
+          this.tableKey++
+          this.imageID = ''
+          this.deleteDialog = false
+          this.agentToDelete = ''
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("containerList.containerDeleted"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('containerList.containerDeleted'),
+            type: 'success',
             duration: 2000
-          });
-          this.getList();
+          })
+          this.getList()
         },
         error => {
-          this.tableKey++;
+          this.tableKey++
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
-          this.deleteDialog = false;
-          this.agentToDelete = "";
-          this.imageID = "";
+          })
+          this.deleteDialog = false
+          this.agentToDelete = ''
+          this.imageID = ''
         }
-      );
+      )
     },
 
     createAgent() {}
   }
-};
+}
 
 </script>
 

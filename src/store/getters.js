@@ -12,6 +12,7 @@ const getters = {
   roles: state => state.user.roles,
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
-  getResources: state => state.resources // added for gridEditor
+  getResources: state => state.resources, // added for gridEditor
+  getSocketMessage: state => state.socket.message // added for Socket notifications
 }
 export default getters

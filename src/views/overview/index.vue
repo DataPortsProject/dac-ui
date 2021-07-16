@@ -1,35 +1,36 @@
 <template>
-  <div class="app-container" :style="bgc">
-    <div id="results">
-      <!--inicio section-->
-      <section class="content">
-
-      </section>
-    <!--fin section-->
+  <div>
+    <div class="app-container" :style="bgc">
+      <el-tabs type="border-card" dark slider-color="green" centered color="green">
+        <el-tab-pane :label="this.$t('overview.notifications')">
+          <NotificationList />
+        </el-tab-pane>
+      </el-tabs>
+      <Footer />
     </div>
-
   </div>
 </template>
 
 <script>
-
+import NotificationList from './component/notificationList.vue'
+import Footer from '../footer/FooterComponent.vue'
 export default {
-  name: 'Overview',
-  props: {},
+  components: {
+    NotificationList,
+    Footer
+  },
   data() {
     return {
-        bgc: {
-            backgroundColor: 'rgb(240,242,245)',
-            height: '100%',
-            width: '100%',
-            overflow: 'hidden',
-            position: 'absolute'
-        }
+      bgc: {
+        backgroundColor: 'rgb(240,242,245)',
+        height: '100%',
+        width: '100%',
+        overflow: 'hidden',
+        position: 'absolute'
+      },
+      list: null
     }
-  },
-  created() {},
-  mounted() {},
-  methods: {}
+  }
 }
 </script>
 

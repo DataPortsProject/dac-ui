@@ -20,7 +20,7 @@ import './permission' // permission control
 import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
-import FormBuilder from 'element-form-builder'//https://www.npmjs.com/package/element-form-builder/v/1.0.0
+import FormBuilder from 'element-form-builder'// https://www.npmjs.com/package/element-form-builder/v/1.0.0
 
 // import '@/assets/css/tailwind.css'
 
@@ -71,6 +71,36 @@ Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 })
+
+import VueNativeSock from 'vue-native-websocket'
+Vue.use(VueNativeSock, 'ws://localhost:3010/websockets', {
+  store: store,
+  // format: 'json',
+  reconnection: true,
+  reconnectionDelay: 3000
+})
+
+setInterval(() => {
+  if (window.localStorage.getItem('isOk') === '1') {
+    var notification = store.getters.getSocketMessage
+    // console.log(notification)
+    const myArr = notification.split(',')
+    if (myArr.length === 3) {
+      // console.log(myArr)
+      var container = myArr[0]
+      var notificationType = myArr[1]
+      // var text = myArr[2]
+
+      Vue.prototype.$message({
+        message: 'Notification received. Container: ' + container,
+        type: notificationType,
+        duration: 1000
+      })
+    }
+
+    window.localStorage.setItem('isOk', '0')
+  }
+}, 1000)
 
 new Vue({
   el: '#app',

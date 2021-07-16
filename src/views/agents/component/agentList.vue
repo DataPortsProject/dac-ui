@@ -18,6 +18,18 @@
         {{ $t("models.search") }}
       </el-button>
       <el-button
+        v-waves
+        class="filter-item"
+        style="
+          margin-left: 10px;
+          border-color: #1890ff;
+          color: #1890ff;
+          backgroundcolor: rgb(240, 242, 245);
+        "
+        icon="el-icon-refresh"
+        @click="getList"
+      />
+      <el-button
         class="filter-item"
         style="float:right;"
         type="primary"
@@ -25,15 +37,17 @@
       >
         {{ $t("agentList.downloadTemplate") }}
       </el-button>
+      <!--
       <el-button
         class="filter-item"
-        style="float:right; display: none"
+        style="float:right"
         type="primary"
         icon="el-icon-plus"
         @click="openImportImageDialog()"
       >
         {{ $t("agentList.addImage") }}
       </el-button>
+      -->
       <!-- icon="el-icon-plus" -->
     </div>
     <el-row style="background:#fff;margin-bottom:30px;">
@@ -84,7 +98,12 @@
         >
           <!-- v-if="row.type !== 'on_demand'" -->
           <template slot-scope="{ row }">
-            <el-button v-if="row.type !== 'on_demand'" size="small" class="editBtn" @click="startAgent(row, false)">
+            <el-button
+              v-if="row.type !== 'on_demand'"
+              size="small"
+              class="editBtn"
+              @click="startAgent(row, false)"
+            >
               <i class="el-icon-edit">
                 {{ $t("agentList.createInstance") }}
               </i>
@@ -283,7 +302,7 @@
             </div>
           </div>
           <div v-if="isOnDemand" class="requiredProperties">
-            {{ $t('agentList.forTestOnly') }}
+            {{ $t("agentList.forTestOnly") }}
           </div>
         </div>
       </el-form>
@@ -388,21 +407,29 @@
                 v-for="image in dataImageForm.imagesAvailable"
                 :key="image.id"
                 :label="image.name"
-                :value="image.path"
+                :value="image.location"
               />
             </el-select>
           </el-form-item>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="closeImportImageDialog()" :disabled="downloading">
+        <el-button
+          type="danger"
+          :disabled="downloading"
+          :loading="downloading"
+          @click="closeImportImageDialog()"
+        >
           {{ $t("common.cancel") }}
         </el-button>
         <el-button
           :disabled="
-            (!dataImageForm.imageSelected || dataImageForm.imageSelected === '') || downloading
+            !dataImageForm.imageSelected ||
+              dataImageForm.imageSelected === '' ||
+              downloading
           "
           type="success"
+          :loading="downloading"
           @click="importImage()"
         >
           {{ $t("common.import") }}
@@ -528,10 +555,19 @@
           <el-row v-if="activeStepWizard == 2">
             <el-row :gutter="20">
               <div v-if="dataModelsList.length > 0">
-                <div v-for="(item, indexList) in dataModelsList" :key="indexList">
+                <div
+                  v-for="(item, indexList) in dataModelsList"
+                  :key="indexList"
+                >
                   <el-col :xs="24" :sm="12" :lg="8">
                     <div @click="checkDataModelProperties(item)">
-                      <el-card :header="item.name" shadow="always" :class="{ 'selected-card': selectDataModel == item.link }">
+                      <el-card
+                        :header="item.name"
+                        shadow="always"
+                        :class="{
+                          'selected-card': selectDataModel == item.link
+                        }"
+                      >
                         {{ item.description }}
                       </el-card>
                     </div>
@@ -546,17 +582,39 @@
             datasource choosen and the type of agent-->
             <el-row :gutter="20">
               <el-col :span="24">
-                <el-form ref="templateForm" class="formulario" label-position="left" label-width="380px">
-                  <el-form-builder ref="builder" :model="formValues" :config="getFormPythonTemplate(selectDataSource, selectTypeAgent)" label-width="160px" @input="dataChanged" />
+                <el-form
+                  ref="templateForm"
+                  class="formulario"
+                  label-position="left"
+                  label-width="380px"
+                >
+                  <el-form-builder
+                    ref="builder"
+                    :model="formValues"
+                    :config="
+                      getFormPythonTemplate(selectDataSource, selectTypeAgent)
+                    "
+                    label-width="160px"
+                    @input="dataChanged"
+                  />
                 </el-form>
                 <!-- start new change -->
                 <div class="components-container">
                   <div class="editor-container">
-                    <dnd-list :used-fields="emptyList" :available-fields="availableList" :used-list-title="$t('wizard.selected_properties')" :available-list-title="$t('wizard.datamodel_properties')" />
+                    <dnd-list
+                      :used-fields="emptyList"
+                      :available-fields="availableList"
+                      :used-list-title="$t('wizard.selected_properties')"
+                      :available-list-title="$t('wizard.datamodel_properties')"
+                    />
                   </div>
                 </div>
                 <!-- end new change -->
-                <div v-if="requiredProperties.length > 0" style="display:none" class="requiredProperties">
+                <div
+                  v-if="requiredProperties.length > 0"
+                  style="display:none"
+                  class="requiredProperties"
+                >
                   {{ mandatoryProperties }}
                 </div>
               </el-col>
@@ -574,7 +632,8 @@
           type="primary"
           :disabled="
             (activeStepWizard == 0 && !selectDataSource) ||
-              (activeStepWizard == 1 && !selectTypeAgent) || (activeStepWizard == 2 && !selectDataModel)
+              (activeStepWizard == 1 && !selectTypeAgent) ||
+              (activeStepWizard == 2 && !selectDataModel)
           "
           @click="obtainDataModel_Properties()"
         >
@@ -644,9 +703,14 @@ import {
   buildAgentContainer
 } from '@/utils/build_ORION_entities'
 
-import { getAllPythonTemplates, getZIPTemplate } from '@/api/pythonTemplate_API'
+import {
+  getAllPythonTemplates,
+  getZIPTemplate
+} from '@/api/pythonTemplate_API'
 
 import { getAllDataModels, getJsonSchema } from '@/api/dataModel'
+
+import { createInfoRegister } from '@/api/info_API'
 
 const fs = require('fs')
 const download = require('downloadjs')
@@ -705,8 +769,8 @@ export default {
       formValues: null,
       formConfig: null,
       hasError: false,
-	    importImageDialog: false,
-	    // DndList
+      importImageDialog: false,
+      // DndList
       emptyList: [],
       availableList: [],
       dataModelsList: [],
@@ -729,7 +793,8 @@ export default {
         { color: '#5cb87a', percentage: 60 },
         { color: '#1989fa', percentage: 80 },
         { color: '#6f7ad3', percentage: 100 }
-      ]
+      ],
+      random_ID: ''
     }
   },
   computed: {
@@ -795,7 +860,6 @@ export default {
       }
     }
     // PROGRESS BAR
-
   },
   watch: {
     lang() {
@@ -815,7 +879,6 @@ export default {
   },
 
   methods: {
-
     commonTranslation() {
       this.requiredText = ' ' + this.$t('common.required')
     },
@@ -941,18 +1004,6 @@ export default {
       }
     },
 
-    handleClose_addImage(done) {
-      this.$confirm('Are you sure to close this dialog?', 'Warning', {
-        confirmButtonText: 'Ok',
-        cancelButtonText: 'Cancel',
-        type: dataportsConstants.WARNING_MESSAGE_TYPE
-      })
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
-    },
-
     getList() {
       this.listLoading = true
       getImages().then(response => {
@@ -982,7 +1033,10 @@ export default {
           // FIXME: De momento hay un boton de refresco en el listado de agente
           // porque no se actualiza la lista, lo suyo sería lanzar algun evento que refresque
           // ese listado o algo por el estilo
-          this.initialTemplate.ContainerName.value = this.initialTemplate.ContainerName.value.replace(/\s+/g, '')
+          this.initialTemplate.ContainerName.value = this.initialTemplate.ContainerName.value.replace(
+            /\s+/g,
+            ''
+          )
 
           const agent = this.constructAgentObject(this.initialTemplate)
           createAgent(agent).then(
@@ -999,6 +1053,16 @@ export default {
                 this.imageID,
                 dataportsConstants.PUBLISH_SUBSCRIBE
               )
+              // this.random_ID
+              var containerData = {
+                'random_id': this.random_ID,
+                'container_name': agent.ContainerName
+              }
+              // console.log(containerData)
+              createInfoRegister(containerData).then(response => {
+                console.log(response)
+                this.random_ID = ''
+              })
             },
             error => {
               this.startAgentDialog = false
@@ -1070,30 +1134,33 @@ export default {
 
       template.environment.forEach(input => {
         var itemInput = JSON.parse(JSON.stringify(input))
-        // console.log(itemInput)
-        var type = ''
-        switch (itemInput.key) {
-          case 'TIME_INTERVAL':
-            type = 'number'
-            break
-          case 'AGENT_TYPE':
-            type = 'agent_type'
-            break
-          case 'TIME_UNIT':
-            type = 'time_unit'
-            break
-          default:
-            type = 'string'
-            break
+
+        if (itemInput.key !== 'RANDOM_ID') {
+          // console.log(itemInput)
+          var type = ''
+          switch (itemInput.key) {
+            case 'TIME_INTERVAL':
+              type = 'number'
+              break
+            case 'AGENT_TYPE':
+              type = 'agent_type'
+              break
+            case 'TIME_UNIT':
+              type = 'time_unit'
+              break
+            default:
+              type = 'string'
+              break
+          }
+          var itemOption = {
+            name: itemInput.key,
+            type: type,
+            value: '',
+            required: true,
+            disabled: false
+          }
+          environmentalVariables.env.push(itemOption)
         }
-        var itemOption = {
-          name: itemInput.key,
-          type: type,
-          value: '',
-          required: true,
-          disabled: false
-        }
-        environmentalVariables.env.push(itemOption)
       })
 
       // initialTemplate.push(environmentalVariables)
@@ -1133,16 +1200,24 @@ export default {
       } else {
         this.isOnDemand = false
       }
+      // console.log('Estoy en startAgent')
+      // console.log(row)
       getTemplate(row.Id).then(response => {
         // console.log('TEMPLATES')
         // console.log(response.message)
+        var enviro = response.message.environment
+        enviro.forEach(prop => {
+          if (prop.key === 'RANDOM_ID') { this.random_ID = prop.value }
+        })
+        // console.log(this.random_ID)
         if (this.isOnDemand) {
           var environment = response.message.environment
           environment.forEach(prop => {
             if (prop.key === 'CALLBACK_URL') {
               // console.log(prop.value)
               this.callback_url = prop.value
-              this.callback_url_set = this.$t('agentList.callback_url_set') + prop.value
+              this.callback_url_set =
+                this.$t('agentList.callback_url_set') + prop.value
             }
           })
         }
@@ -1169,7 +1244,7 @@ export default {
       console.log(this.formValues);
       console.log(this.formConfig);*/
 
-      this.formValues.constants = this.selectedTemplate.constants// this.formConfig[0].constants
+      this.formValues.constants = this.selectedTemplate.constants // this.formConfig[0].constants
       this.formValues.dockerFile = this.selectedTemplate.dockerFile
       this.formValues.script = this.selectedTemplate.script
       this.formValues.fieldsUsed_DataModel = this.emptyList
@@ -1196,7 +1271,7 @@ export default {
         })
       })
     },
-	  resetWizard() {
+    resetWizard() {
       this.activeStepWizard = 0
       this.selectDataSource = ''
       this.selectTypeAgent = ''
@@ -1213,7 +1288,10 @@ export default {
     getFormPythonTemplate(source, type) {
       this.selectedTemplate = []
       for (var i = 0; i < this.formConfig.length; i++) {
-        if (this.formConfig[i].source === source && this.formConfig[i].type === type) {
+        if (
+          this.formConfig[i].source === source &&
+          this.formConfig[i].type === type
+        ) {
           this.selectedTemplate = this.formConfig[i]
           return this.formConfig[i].template
         }
@@ -1239,8 +1317,8 @@ export default {
           }
         })
       }
-	  },
-	  // TODO: IMPORT NEW IMAGES
+    },
+    // TODO: IMPORT NEW IMAGES
     openImportImageDialog() {
       getImagesFromGitlab().then(
         response => {
@@ -1259,9 +1337,7 @@ export default {
       this.dataImageForm.imageSelected = ''
     },
 
-    getImagesAvailable() {
-
-    },
+    getImagesAvailable() {},
 
     async importImage() {
       this.downloading = true
@@ -1275,16 +1351,28 @@ export default {
           console.log(response)
           this.downloading = false
           this.closeImportImageDialog()
+          this.$notify({
+            title: this.$t('common.success'),
+            message: this.$t('agentList.imageImported'),
+            type: 'success',
+            duration: 2000
+          })
         },
         error => {
           console.log(error)
           this.downloading = false
           this.closeImportImageDialog()
+          this.$notify({
+            title: this.$t('common.error'),
+            message: error,
+            type: 'error',
+            duration: 2000
+          })
         }
       )
     },
 
-	  // Methods for DndList
+    // Methods for DndList
     obtainDataModel_Properties() {
       if (this.activeStepWizard < 3) {
         this.activeStepWizard++
@@ -1306,8 +1394,8 @@ export default {
           console.log('PRIVATE REPOSITORY')
 
           var data = {
-            'projectName': this.projectName_dataModel,
-            'link': this.selectDataModel
+            projectName: this.projectName_dataModel,
+            link: this.selectDataModel
           }
 
           getJsonSchema(data).then(response => {
@@ -1330,7 +1418,10 @@ export default {
 
             this.availableList = items
             this.build_region_requiredProperties(this.jsonSchema.required)
-            this.jsonSchemaSerialized = this.buildDataSourceObject(items, false)
+            this.jsonSchemaSerialized = this.buildDataSourceObject(
+              items,
+              false
+            )
             // console.log(this.jsonSchemaSerialized)
           })
         } else {
@@ -1339,20 +1430,25 @@ export default {
           const url = this.selectDataModel
           const settings = { method: 'Get' }
 
-          fetch(url, settings).then(res => res.json()).then((json) => {
-            // console.log(json)
-            this.jsonSchema = json
+          fetch(url, settings)
+            .then(res => res.json())
+            .then(json => {
+              // console.log(json)
+              this.jsonSchema = json
 
-            var items = this.jsonSchema.allOf.length
-            // console.log(items)
-            var properties = this.jsonSchema.allOf[items - 1]
+              var items = this.jsonSchema.allOf.length
+              // console.log(items)
+              var properties = this.jsonSchema.allOf[items - 1]
 
-            // console.log(properties)
-            this.availableList = this.obtainProperties_Schema(properties)
-            this.build_region_requiredProperties(this.jsonSchema.required)
-            this.jsonSchemaSerialized = this.buildDataSourceObject(properties, true)
-            // console.log(this.jsonSchemaSerialized)
-          })
+              // console.log(properties)
+              this.availableList = this.obtainProperties_Schema(properties)
+              this.build_region_requiredProperties(this.jsonSchema.required)
+              this.jsonSchemaSerialized = this.buildDataSourceObject(
+                properties,
+                true
+              )
+              // console.log(this.jsonSchemaSerialized)
+            })
         }
       }
     },
@@ -1408,28 +1504,28 @@ export default {
       this.dataModelType = type
 
       var datasource = {
-        'id': 'urn:ngsi-ld:DataSource:' + type,
-        'type': 'DataSource',
-        'attributes': {},
-        'dataProvided': {
-          'type': 'StructuredValue',
-          'value': values,
-          'metadata': {}
+        id: 'urn:ngsi-ld:DataSource:' + type,
+        type: 'DataSource',
+        attributes: {},
+        dataProvided: {
+          type: 'StructuredValue',
+          value: values,
+          metadata: {}
         },
-        'description': {
-          'type': 'Text',
-          'value': type + ' data source',
-          'metadata': {}
+        description: {
+          type: 'Text',
+          value: type + ' data source',
+          metadata: {}
         },
-        'onChain': {
-          'type': 'Boolean',
-          'value': false,
-          'metadata': {}
+        onChain: {
+          type: 'Boolean',
+          value: false,
+          metadata: {}
         },
-        'dataModels': {
-          'type': 'Text',
-          'value': this.selectDataModel,
-          'metadata': {}
+        dataModels: {
+          type: 'Text',
+          value: this.selectDataModel,
+          metadata: {}
         }
       }
       // console.log(datasource)
@@ -1448,7 +1544,8 @@ export default {
         }
       })
       // console.log(items)
-      this.mandatoryProperties = this.$t('wizard.mandatoryProperties') + elements
+      this.mandatoryProperties =
+        this.$t('wizard.mandatoryProperties') + elements
     },
 
     checkDataModelProperties(item) {
@@ -1488,9 +1585,8 @@ export default {
       }, 0.5 * 750)
     },
     sleep(time) {
-      return new Promise((resolve) => setTimeout(resolve, time))
+      return new Promise(resolve => setTimeout(resolve, time))
     }
-
   }
 }
 </script>

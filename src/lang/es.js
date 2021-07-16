@@ -102,7 +102,8 @@ export default {
     publish_subscribeDescription: 'Agente que envia los datos a ORION',
     on_demandDescription: 'Agent que enviara los datos a la URL de Callaback',
     containerName_characteristics: 'El nombre del contenedor debe ir en minúsculas. Sin espacios ni caracteres especiales. Puede contener numeros.',
-    downloadingTemplate: 'Descargando plantilla'
+    downloadingTemplate: 'Descargando plantilla',
+    imageImported: 'Imagen importada'
   },
   'datasourceList': {
     'idTableColumn': 'Id',
@@ -146,5 +147,20 @@ export default {
     mandatoryProperties: 'Estas propiedades son obligatorias: ',
     description_api_agentType: 'Conector / Agente cuyo origen de datos será una API',
     description_local_txt_file_agentType: 'Conector / Agente cuyo origen de datos será un fichero txt local'
+  },
+  overview: {
+    notifications: 'Notificaciones',
+    tableColumnType: 'Tipo',
+    tableColumnMessage: 'Mensaje',
+    tableColumnCreated: 'Fecha creación',
+    deleteNotification: 'Borrar Notificación',
+    deleteNotificationDialogTitle: 'Borrar Notificación',
+    'deleteNotificationDialogQuestion': '¿Está seguro que quiere eliminar esta notificación?',
+    deletedNotification: 'Notificación borrada satisfactoriamente',
+    deleteAllNotifications: 'Borrar todas las notificaciones',
+    deleteAllNotificationDialogTitle: 'Borrar todas las notificaciones',
+    deleteAllNotificationDialogQuestion: '¿Está seguro que quiere eliminar todas las notificaciones?',
+    deletedNotifications: 'Notificaciones borradas satisfactoriamente',
+    tableColumnContainerName: 'Nombre contenedor'
   }
 }
