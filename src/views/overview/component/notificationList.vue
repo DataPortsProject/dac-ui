@@ -61,7 +61,12 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <span>{{ row.type }}</span>
+            <div v-if="row.type === 'SUCCESS'">
+              <span class="successNotification">{{ row.type }}</span>
+            </div>
+            <div v-if="row.type === 'ERROR'">
+              <span class="errorNotification">{{ row.type }}</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
@@ -86,6 +91,11 @@
           class-name="small-padding fixed-width"
         >
           <template slot-scope="{ row }">
+            <el-button v-if="row.register !== ''" size="small" class="viewLogBtn" @click="showMessageSended(row)">
+              <i class="el-icon-view">
+                {{ $t("overview.messageSended") }}
+              </i>
+            </el-button>
             <el-button
               size="small"
               class="deleteBtn"
@@ -150,12 +160,30 @@
       </div>
     </el-dialog>
 
+    <!-- DIALOG TO SHOW MESSAGE SENDED TO ORION -->
+    <el-dialog
+      :visible.sync="viewMessageToORION"
+      width="80%"
+      :title="$t('overview.messageSended')"
+    >
+      <el-card class="box-card">
+        <json-editor ref="jsonMetadata" v-model="messageToORION" />
+      </el-card>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="success" @click="closeMessageToORION()">
+          {{ $t("common.close") }}
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on
+import JsonEditor from '@/components/JsonEditor'
 
 import { getNotificationsList, deleteNotificationById } from '@/api/notifications_API'
 
@@ -163,7 +191,7 @@ import { getNotificationsList, deleteNotificationById } from '@/api/notification
 
 export default {
   name: 'NotificationList',
-  components: { Pagination },
+  components: { JsonEditor, Pagination },
   directives: { waves },
   data() {
     return {
@@ -184,7 +212,9 @@ export default {
       requiredText: '',
       deleteNotificationDialog: false,
       notificationToDelete: '',
-      deleteAllNotificationDialog: false
+      deleteAllNotificationDialog: false,
+      viewMessageToORION: false,
+      messageToORION: null
     }
   },
   computed: {
@@ -204,7 +234,7 @@ export default {
     filteredImagesBySearchText() {
       // return this.list.filter(img => img.RepoTags[0].toLowerCase().includes(this.searchText.toLowerCase()))
       return this.list.filter(notif =>
-        notif.type.toLowerCase().includes(this.searchText.toLowerCase())
+        notif.id.toLowerCase().includes(this.searchText.toLowerCase())
       )
     },
 
@@ -330,6 +360,18 @@ export default {
     hideDeleteNotificationDialog() {
       this.deleteNotificationDialog = false
       this.notificationToDelete = ''
+    },
+
+    showMessageSended(row) {
+      this.messageToORION = ''
+
+      this.messageToORION = JSON.parse(row.register)
+
+      this.viewMessageToORION = true
+    },
+
+    closeMessageToORION() {
+      this.viewMessageToORION = false
     }
 
   }
@@ -376,5 +418,13 @@ export default {
 .requiredProperties {
   color: red;
   padding-bottom: 20px;
+}
+.successNotification {
+  color: green;
+  font-weight: bold;
+}
+.errorNotification {
+  color: red;
+  font-weight: bold;
 }
 </style>

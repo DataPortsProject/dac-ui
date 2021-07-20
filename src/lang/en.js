@@ -146,7 +146,8 @@ export default {
     selected_properties: 'Selected properties',
     mandatoryProperties: 'These properties are mandatory: ',
     description_api_agentType: 'Connector / Agent whose data source will be an API',
-    description_local_txt_file_agentType: 'Connector / Agent whose data source will be a local txt file'
+    description_local_txt_file_agentType: 'Connector / Agent whose data source will be a local txt file',
+    description_local_excel_file_agentType: 'Connector / Agent whose data source will be a local excel file'
   },
   overview: {
     notifications: 'Notifications',
@@ -161,6 +162,7 @@ export default {
     deleteAllNotificationDialogTitle: 'Delete all notifications',
     deleteAllNotificationDialogQuestion: 'Are you sure you want to delete all the notifications?',
     deletedNotifications: 'Notifications deleted successfully',
-    tableColumnContainerName: 'Container name'
+    tableColumnContainerName: 'Container name',
+    messageSended: 'Message Sended'
   }
 }

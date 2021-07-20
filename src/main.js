@@ -80,6 +80,8 @@ Vue.use(VueNativeSock, 'ws://localhost:3010/websockets', {
   reconnectionDelay: 3000
 })
 
+import constants from './utils/constants'
+
 setInterval(() => {
   if (window.localStorage.getItem('isOk') === '1') {
     var notification = store.getters.getSocketMessage
@@ -91,16 +93,25 @@ setInterval(() => {
       var notificationType = myArr[1]
       // var text = myArr[2]
 
+      var typeMsg = ''
+      if (notificationType === 'SUCCESS') {
+        typeMsg = constants.SUCCESS_MESSAGE_TYPE
+      } else if (notificationType === 'ERROR') {
+        typeMsg = constants.ERROR_MESSAGE_TYPE
+      } else {
+        typeMsg = constants.WARNING_MESSAGE_TYPE
+      }
+
       Vue.prototype.$message({
         message: 'Notification received. Container: ' + container,
-        type: notificationType,
+        type: typeMsg,
         duration: 1000
       })
     }
 
     window.localStorage.setItem('isOk', '0')
   }
-}, 1000)
+}, 500)
 
 new Vue({
   el: '#app',
