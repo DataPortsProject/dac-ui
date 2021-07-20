@@ -86,8 +86,8 @@
               row.type === "on_demand"
                 ? "ON DEMAND"
                 : row.type === "publish-subscribe"
-                ? "PUBLISH-SUBSCRIBE"
-                : ""
+                  ? "PUBLISH-SUBSCRIBE"
+                  : ""
             }}</span>
           </template>
         </el-table-column>
@@ -700,48 +700,48 @@
 </template>
 
 <script>
-import waves from "@/directive/waves"; // waves directive
-import Pagination from "@/components/Pagination"; // secondary package based on
+import waves from '@/directive/waves' // waves directive
+import Pagination from '@/components/Pagination' // secondary package based on
 import {
   getImages,
   getTemplate,
   deleteImageById,
   getDataSource
-} from "@/api/images_API";
-import { createORIONEntities, getORIONEntitiesByType } from "@/api/orion_API";
-import { createAgent } from "@/api/agents_API";
-import { getImagesFromGitlab, downloadImage } from "@/api/images_API";
+} from '@/api/images_API'
+import { createORIONEntities, getORIONEntitiesByType } from '@/api/orion_API'
+import { createAgent } from '@/api/agents_API'
+import { getImagesFromGitlab, downloadImage } from '@/api/images_API'
 
-import dataportsConstants from "@/utils/constants";
+import dataportsConstants from '@/utils/constants'
 import {
   buildAgentImage,
   buildAgentContainer
-} from "@/utils/build_ORION_entities";
+} from '@/utils/build_ORION_entities'
 
 import {
   getAllPythonTemplates,
   getZIPTemplate
-} from "@/api/pythonTemplate_API";
+} from '@/api/pythonTemplate_API'
 
-import { getAllDataModels, getJsonSchema } from "@/api/dataModel";
+import { getAllDataModels, getJsonSchema } from '@/api/dataModel'
 
-import { createInfoRegister } from "@/api/info_API";
+import { createInfoRegister } from '@/api/info_API'
 
-const fs = require("fs");
-const download = require("downloadjs");
+const fs = require('fs')
+const download = require('downloadjs')
 
-import DndList from "@/components/DndList";
+import DndList from '@/components/DndList'
 
 export default {
-  name: "AgentList",
+  name: 'AgentList',
   components: { Pagination, DndList },
   directives: { waves },
   data() {
     return {
       bgc: {
-        backgroundColor: "rgb(240,242,245)",
-        height: "100%",
-        width: "100%"
+        backgroundColor: 'rgb(240,242,245)',
+        height: '100%',
+        width: '100%'
       },
       listQuery: {
         page: 1,
@@ -749,11 +749,11 @@ export default {
         id: undefined
       },
       listLoading: true,
-      searchText: "",
+      searchText: '',
       list: [],
       total: 0,
       startAgentDialog: false,
-      dialogTitleCreateAgent: "",
+      dialogTitleCreateAgent: '',
       dialogFormCreateAgentVisible: false,
       activeStepWizard: 0,
       selectDataSource: null,
@@ -762,23 +762,23 @@ export default {
       initialTemplate: {
         env: []
       },
-      label_widthColumn: "150px",
-      requiredText: "",
+      label_widthColumn: '150px',
+      requiredText: '',
       rules: {},
       AgentTypes: dataportsConstants.agentType,
       TimeUnit: dataportsConstants.timeUnit,
       dialogAddImage_Visible: false,
       dataImageForm: {
-        imageName: "",
-        url: "",
-        user: "",
-        pass: "",
+        imageName: '',
+        url: '',
+        user: '',
+        pass: '',
         privateRepository: false,
         imagesAvailable: [],
-        imageSelected: ""
+        imageSelected: ''
       },
       deleteDialog: false,
-      imageToDelete: "",
+      imageToDelete: '',
       imageID: null,
       // Form builder --> Download Template
       formValues: null,
@@ -791,161 +791,162 @@ export default {
       dataModelsList: [],
       isPrivateRepository_dataModel: false,
       requiredProperties: [],
-      mandatoryProperties: "",
-      jsonSchema: "",
-      jsonSchemaSerialized: "",
-      projectName_dataModel: "",
-      dataModelType: "",
+      mandatoryProperties: '',
+      jsonSchema: '',
+      jsonSchemaSerialized: '',
+      projectName_dataModel: '',
+      dataModelType: '',
       selectedTemplate: null,
       downloading: false,
       isOnDemand: false,
-      callback_url_set: "",
+      callback_url_set: '',
       progressDialog: false,
       percentage: 20,
       customColors: [
-        { color: "#f56c6c", percentage: 20 },
-        { color: "#e6a23c", percentage: 40 },
-        { color: "#5cb87a", percentage: 60 },
-        { color: "#1989fa", percentage: 80 },
-        { color: "#6f7ad3", percentage: 100 }
+        { color: '#f56c6c', percentage: 20 },
+        { color: '#e6a23c', percentage: 40 },
+        { color: '#5cb87a', percentage: 60 },
+        { color: '#1989fa', percentage: 80 },
+        { color: '#6f7ad3', percentage: 100 }
       ],
-      random_ID: ""
-    };
+      random_ID: '',
+      externalImage: false
+    }
   },
   computed: {
     filteredImagesByPagination() {
-      const page = this.listQuery.page;
-      const limit = this.listQuery.limit;
+      const page = this.listQuery.page
+      const limit = this.listQuery.limit
 
       if (Math.ceil(this.filteredImagesBySearchTextLength / limit) >= page) {
         return this.filteredImagesBySearchText.slice(
           (page - 1) * limit,
           page * limit
-        );
+        )
       } else {
-        return this.filteredImagesBySearchText.slice(0, limit);
+        return this.filteredImagesBySearchText.slice(0, limit)
       }
     },
     filteredImagesBySearchText() {
       // return this.list.filter(img => img.RepoTags[0].toLowerCase().includes(this.searchText.toLowerCase()))
       return this.list.filter(img =>
         img.name.toLowerCase().includes(this.searchText.toLowerCase())
-      );
+      )
     },
     checkContainerName() {
-      const containerName = this.initialTemplate.ContainerName.value;
-      return containerName && (containerName !== "" || containerName !== " ")
-        ? ""
-        : `AGENT NAME ${this.requiredText}`;
+      const containerName = this.initialTemplate.ContainerName.value
+      return containerName && (containerName !== '' || containerName !== ' ')
+        ? ''
+        : `AGENT NAME ${this.requiredText}`
     },
 
     filteredImagesBySearchTextLength() {
-      return this.filteredImagesBySearchText.length;
+      return this.filteredImagesBySearchText.length
     },
     getImportImageRules() {
       return {
         imageName: [
           {
             required: true,
-            message: this.$t("common.required"),
-            trigger: "blur"
+            message: this.$t('common.required'),
+            trigger: 'blur'
           }
         ],
         url: [
           {
             required: true,
-            message: this.$t("common.required"),
-            trigger: "blur"
+            message: this.$t('common.required'),
+            trigger: 'blur'
           }
         ],
         pass: [
           {
             required: !!this.dataImageForm.privateRepository,
-            message: this.$t("common.required"),
-            trigger: "blur"
+            message: this.$t('common.required'),
+            trigger: 'blur'
           }
         ],
         user: [
           {
             required: !!this.dataImageForm.privateRepository,
-            message: this.$t("common.required"),
-            trigger: "blur"
+            message: this.$t('common.required'),
+            trigger: 'blur'
           }
         ]
-      };
+      }
     }
     // PROGRESS BAR
   },
   watch: {
     lang() {
-      this.commonTranslation();
+      this.commonTranslation()
     }
   },
 
   mounted() {
-    this.getList();
+    this.getList()
   },
 
   created() {
-    this.getList();
-    this.commonTranslation();
-    this.getPythonTemplates();
-    this.getDataModels();
+    this.getList()
+    this.commonTranslation()
+    this.getPythonTemplates()
+    this.getDataModels()
   },
 
   methods: {
     commonTranslation() {
-      this.requiredText = " " + this.$t("common.required");
+      this.requiredText = ' ' + this.$t('common.required')
     },
 
     addImage() {
-      this.dialogAddImage_Visible = true;
+      this.dialogAddImage_Visible = true
       this.$nextTick(() => {
-        this.$refs["dataImageForm"].clearValidate();
-        this.$refs.imageName.focus(); // Put focus over the first input control
-      });
+        this.$refs['dataImageForm'].clearValidate()
+        this.$refs.imageName.focus() // Put focus over the first input control
+      })
     },
 
     showDeleteDialog(id) {
-      this.deleteDialog = true;
-      this.imageToDelete = id;
+      this.deleteDialog = true
+      this.imageToDelete = id
     },
 
     hideDeleteDialog() {
-      this.deleteDialog = false;
-      this.imageToDelete = "";
+      this.deleteDialog = false
+      this.imageToDelete = ''
     },
 
     pullImage(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // pull the image from the docker registry
-          console.log("Hago un pull de la imagen");
+          console.log('Hago un pull de la imagen')
 
           // Oculto el modal
-          this.dialogAddImage_Visible = false;
+          this.dialogAddImage_Visible = false
 
           // Debe comprobarse que se ha hecho el pull de forma correcta.
 
           // Recover ID of the image
           var id =
-            "sha256:2a81e166f9c3b4255d86df325e01ec04bf3599ddbd49d9767d21dd48e8df3b2b";
+            'sha256:2a81e166f9c3b4255d86df325e01ec04bf3599ddbd49d9767d21dd48e8df3b2b'
           // call createEntities_To_ORION --> Insert AgentImage y DataSource
-          this.createEntities_To_ORION(id, dataportsConstants.ON_DEMAND);
+          this.createEntities_To_ORION(id, dataportsConstants.ON_DEMAND)
         }
-      });
+      })
     },
 
     async createEntities_To_ORION(id, imageType) {
-      var data;
+      var data
 
       await getDataSource(id).then(response => {
-        data = response.message;
-      });
+        data = response.message
+      })
 
       // Convert dataSource to JSON
-      var dataSourceObject = JSON.parse(data.dataSource);
-      var dataSourceID = dataSourceObject.id;
+      var dataSourceObject = JSON.parse(data.dataSource)
+      var dataSourceID = dataSourceObject.id
 
       // Check image type!!
       // Si es on_demand
@@ -955,11 +956,11 @@ export default {
           data.Id,
           data.image,
           dataSourceID
-        );
+        )
         // Send the entity AgentImage to ORION
         await createORIONEntities(entityAgentImage).then(response => {
-          console.log(response);
-        });
+          console.log(response)
+        })
 
         // Check if DataSource exists
         await getORIONEntitiesByType(dataportsConstants.DATA_SOURCE).then(
@@ -967,21 +968,21 @@ export default {
             if (response.status === dataportsConstants.OK) {
               // He podido recuperar las datasources registradas en ORION
               // Voy a ver si la DataSource de mi AgentImage esta ya registrada o no
-              var existDataSource = false;
+              var existDataSource = false
               response.message.forEach(input => {
                 if (input.id === dataSourceID) {
-                  existDataSource = true;
+                  existDataSource = true
                 }
-              });
+              })
               if (!existDataSource) {
                 // Insert DataSource
                 createORIONEntities(dataSourceObject).then(response => {
-                  console.log(response);
-                });
+                  console.log(response)
+                })
               }
             }
           }
-        );
+        )
       } else if (imageType === dataportsConstants.PUBLISH_SUBSCRIBE) {
         // Si es pub-sub
         // Si no es ON DEMAND será PUBLISH - SUBSCRIBE
@@ -990,53 +991,53 @@ export default {
           data.Id,
           data.image,
           dataSourceID
-        );
+        )
         // Send the entity AgentImage to ORION
         await createORIONEntities(entityAgentContainer).then(response => {
-          console.log(response);
-        });
+          console.log(response)
+        })
         // Check if DataSource exists
         await getORIONEntitiesByType(dataportsConstants.DATA_SOURCE).then(
           response => {
             if (response.status === dataportsConstants.OK) {
               // He podido recuperar las datasources registradas en ORION
               // Voy a ver si la DataSource de mi AgentImage esta ya registrada o no
-              var existDataSource = false;
+              var existDataSource = false
               response.message.forEach(input => {
                 if (input.id === dataSourceID) {
-                  existDataSource = true;
+                  existDataSource = true
                 }
-              });
+              })
               if (!existDataSource) {
                 // Insert DataSource
                 createORIONEntities(dataSourceObject).then(response => {
-                  console.log(response);
-                });
+                  console.log(response)
+                })
               }
             }
           }
-        );
+        )
       }
     },
 
     getList() {
-      this.listLoading = true;
+      this.listLoading = true
       getImages().then(response => {
-        console.log("IMAGES ->", response);
-        this.list = response.message;
-        this.total = this.list.length;
+        console.log('IMAGES ->', response)
+        this.list = response.message
+        this.total = this.list.length
         setTimeout(() => {
-          this.listLoading = false;
-        }, 1.5 * 1000);
-      });
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
     },
 
     getDataModels() {
       getAllDataModels().then(response => {
         // console.log('DATA MODELS')
         // console.log(response.message)
-        this.dataModelsList = response.message;
-      });
+        this.dataModelsList = response.message
+      })
     },
 
     handleFilter() {},
@@ -1050,73 +1051,78 @@ export default {
           // ese listado o algo por el estilo
           this.initialTemplate.ContainerName.value = this.initialTemplate.ContainerName.value.replace(
             /\s+/g,
-            ""
-          );
-          const agent = this.constructAgentObject(this.initialTemplate);
+            ''
+          )
+
+          const agent = this.constructAgentObject(this.initialTemplate)
+          /* console.log(agent)
+          return ''*/
 
           createAgent(agent).then(
             response => {
-              this.startAgentDialog = false;
+              this.startAgentDialog = false
               this.$notify({
-                title: this.$t("common.success"),
-                message: this.$t("agentList.agentCreated"),
-                type: "success",
+                title: this.$t('common.success'),
+                message: this.$t('agentList.agentCreated'),
+                type: 'success',
                 duration: 2000
-              });
-              // Una vez se ha puesto en marcha, hay que insertar la entidad AgentContainer y DataSource asociadas al contenedor recien creado
-              this.createEntities_To_ORION(
-                this.imageID,
-                dataportsConstants.PUBLISH_SUBSCRIBE
-              );
+              })
+              if (!this.externalImage) {
+                // Una vez se ha puesto en marcha, hay que insertar la entidad AgentContainer y DataSource asociadas al contenedor recien creado
+                this.createEntities_To_ORION(
+                  this.imageID,
+                  dataportsConstants.PUBLISH_SUBSCRIBE
+                )
+              }
               // this.random_ID
               var containerData = {
                 random_id: this.random_ID,
                 container_name: agent.ContainerName
-              };
+              }
               // console.log(containerData)
               createInfoRegister(containerData).then(response => {
-                console.log(response);
-                this.random_ID = "";
-              });
+                console.log(response)
+                this.random_ID = ''
+              })
             },
             error => {
-              this.startAgentDialog = false;
+              this.startAgentDialog = false
               this.$notify({
-                title: this.$t("common.error"),
+                title: this.$t('common.error'),
                 message: error,
-                type: "error",
+                type: 'error',
                 duration: 2000
-              });
+              })
             }
-          );
+          )
         } else {
           this.$notify({
-            title: this.$t("common.error"),
-            message: this.$t("agentList.reviewMandatoryFields"),
-            type: "error",
+            title: this.$t('common.error'),
+            message: this.$t('agentList.reviewMandatoryFields'),
+            type: 'error',
             duration: 2000
-          });
+          })
         }
-      });
+      })
     },
 
     constructAgentObject(data) {
       var agent = {
         ContainerName: data.ContainerName.value,
-        Hostname: "",
-        Domainname: "",
-        User: "",
+        Hostname: '',
+        Domainname: '',
+        User: '',
         Image: data.Image.value,
         Env: []
-      };
+      }
 
       data.env.forEach(e => {
-        const key = e.name;
-        const value = e.value;
-        agent.Env.push(`${key}=${value}`);
-      });
+        const key = e.name
+        const value = e.value
+        agent.Env.push(`${key}=${value}`)
+      })
 
-      return agent;
+      return agent
     },
 
     buildCreatingAgent(template) {
@@ -1125,133 +1131,137 @@ export default {
         Image: {},
         ContainerName: {},
         env: []
-      };
+      }
 
       var imageName = {
-        name: "IMAGE NAME",
-        type: "string",
+        name: 'IMAGE NAME',
+        type: 'string',
         value: template.image,
         required: false,
         disabled: true,
-        variable: "image"
-      };
-      environmentalVariables.Image = imageName;
+        variable: 'image'
+      }
+      environmentalVariables.Image = imageName
 
       var containerName = {
-        name: "AGENT NAME",
-        type: "string",
-        value: "",
+        name: 'AGENT NAME',
+        type: 'string',
+        value: '',
         required: true,
         disabled: false,
-        variable: "name"
-      };
-      environmentalVariables.ContainerName = containerName;
+        variable: 'name'
+      }
+      environmentalVariables.ContainerName = containerName
 
       template.environment.forEach(input => {
-        var itemInput = JSON.parse(JSON.stringify(input));
+        var itemInput = JSON.parse(JSON.stringify(input))
 
-        if (itemInput.key !== "RANDOM_ID") {
+        if (itemInput.key !== 'RANDOM_ID') {
           // console.log(itemInput)
-          var type = "";
+          var type = ''
           switch (itemInput.key) {
-            case "TIME_INTERVAL":
-              type = "number";
-              break;
-            case "AGENT_TYPE":
-              type = "agent_type";
-              break;
-            case "TIME_UNIT":
-              type = "time_unit";
-              break;
+            case 'TIME_INTERVAL':
+              type = 'number'
+              break
+            case 'AGENT_TYPE':
+              type = 'agent_type'
+              break
+            case 'TIME_UNIT':
+              type = 'time_unit'
+              break
             default:
-              type = "string";
-              break;
+              type = 'string'
+              break
           }
           var itemOption = {
             name: itemInput.key,
             type: type,
-            value: "",
+            value: '',
             required: true,
             disabled: false
-          };
-          environmentalVariables.env.push(itemOption);
+          }
+          environmentalVariables.env.push(itemOption)
         }
-      });
+      })
 
       // initialTemplate.push(environmentalVariables)
-      this.initialTemplate = environmentalVariables;
+      this.initialTemplate = environmentalVariables
       // console.log(this.initialTemplate)
     },
 
     deleteImage() {
       deleteImageById(this.imageToDelete)
         .then(response => {
-          this.getList();
+          this.getList()
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("agentList.deletedImage"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('agentList.deletedImage'),
+            type: 'success',
             duration: 2000
-          });
-          this.imageToDelete = "";
-          this.deleteDialog = false;
+          })
+          this.imageToDelete = ''
+          this.deleteDialog = false
         })
         .catch(error => {
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
-          this.imageToDelete = false;
-          this.deleteDialog = false;
-        });
+          })
+          this.imageToDelete = false
+          this.deleteDialog = false
+        })
     },
 
     startAgent(row, isOnDemand_Image) {
-      this.imageID = row.Id;
+      this.imageID = row.Id
+
+      if (row.name.includes('external')) {
+        this.externalImage = true
+      }
       if (isOnDemand_Image) {
-        this.isOnDemand = true;
+        this.isOnDemand = true
       } else {
-        this.isOnDemand = false;
+        this.isOnDemand = false
       }
       // console.log('Estoy en startAgent')
       // console.log(row)
       getTemplate(row.Id).then(response => {
         // console.log('TEMPLATES')
         // console.log(response.message)
-        var enviro = response.message.environment;
+        var enviro = response.message.environment
         enviro.forEach(prop => {
-          if (prop.key === "RANDOM_ID") {
-            this.random_ID = prop.value;
+          if (prop.key === 'RANDOM_ID') {
+            this.random_ID = prop.value
           }
-        });
+        })
         // console.log(this.random_ID)
         if (this.isOnDemand) {
-          var environment = response.message.environment;
+          var environment = response.message.environment
           environment.forEach(prop => {
-            if (prop.key === "CALLBACK_URL") {
+            if (prop.key === 'CALLBACK_URL') {
               // console.log(prop.value)
-              this.callback_url = prop.value;
+              this.callback_url = prop.value
               this.callback_url_set =
-                this.$t("agentList.callback_url_set") + prop.value;
+                this.$t('agentList.callback_url_set') + prop.value
             }
-          });
+          })
         }
-        this.buildCreatingAgent(response.message);
-        this.startAgentDialog = true;
-      });
+        this.buildCreatingAgent(response.message)
+        this.startAgentDialog = true
+      })
     },
 
     closeAgentDialog() {
-      this.imageID = null;
-      this.startAgentDialog = false;
+      this.imageID = null
+      this.startAgentDialog = false
     },
 
     developAgent() {
       // method to create a template for the agent, a dockerFile and a readme.txt file with the help of a Wizard
-      this.dialogTitleCreateAgent = this.$t("agentList.createAgentDialogTitle");
-      this.dialogFormCreateAgentVisible = true;
+      this.dialogTitleCreateAgent = this.$t('agentList.createAgentDialogTitle')
+      this.dialogFormCreateAgentVisible = true
     },
 
     createAgentTemplate() {
@@ -1261,138 +1271,138 @@ export default {
       console.log(this.formValues);
       console.log(this.formConfig);*/
 
-      this.formValues.constants = this.selectedTemplate.constants; // this.formConfig[0].constants
-      this.formValues.dockerFile = this.selectedTemplate.dockerFile;
-      this.formValues.script = this.selectedTemplate.script;
-      this.formValues.fieldsUsed_DataModel = this.emptyList;
-      this.formValues.jsonSchemaSerialized = this.jsonSchemaSerialized;
-      this.formValues.dataModelType = this.dataModelType;
+      this.formValues.constants = this.selectedTemplate.constants // this.formConfig[0].constants
+      this.formValues.dockerFile = this.selectedTemplate.dockerFile
+      this.formValues.script = this.selectedTemplate.script
+      this.formValues.fieldsUsed_DataModel = this.emptyList
+      this.formValues.jsonSchemaSerialized = this.jsonSchemaSerialized
+      this.formValues.dataModelType = this.dataModelType
 
       // console.log(this.formValues.dataModelType)
 
-      this.progressDialog = true;
-      this.load();
+      this.progressDialog = true
+      this.load()
 
       getZIPTemplate(this.formValues).then(response => {
-        this.percentage = 50;
-        console.log("Returning zip with the templates!!");
-        const fileName = `${Date.now()}.zip`;
-        this.percentage = 80;
-        download(response, fileName, "application/zip");
-        this.percentage = 100;
+        this.percentage = 50
+        console.log('Returning zip with the templates!!')
+        const fileName = `${Date.now()}.zip`
+        this.percentage = 80
+        download(response, fileName, 'application/zip')
+        this.percentage = 100
         this.sleep(1500).then(() => {
           // Oculto el Wizard
-          this.dialogFormCreateAgentVisible = false;
-          this.resetWizard();
-          this.progressDialog = false;
-        });
-      });
+          this.dialogFormCreateAgentVisible = false
+          this.resetWizard()
+          this.progressDialog = false
+        })
+      })
     },
     resetWizard() {
-      this.activeStepWizard = 0;
-      this.selectDataSource = "";
-      this.selectTypeAgent = "";
-      this.selectDataModel = "";
-      this.emptyList = [];
-      this.formValues = null;
+      this.activeStepWizard = 0
+      this.selectDataSource = ''
+      this.selectTypeAgent = ''
+      this.selectDataModel = ''
+      this.emptyList = []
+      this.formValues = null
     },
     // Before closing Wizard popup
     handleClose_Wizard(done) {
-      this.resetWizard();
+      this.resetWizard()
     },
 
     // Devuelve el template almacenado por source y type. Habra que agregar en el futuro el campo Data Model.
     getFormPythonTemplate(source, type) {
-      this.selectedTemplate = [];
+      this.selectedTemplate = []
       for (var i = 0; i < this.formConfig.length; i++) {
         if (
           this.formConfig[i].source === source &&
           this.formConfig[i].type === type
         ) {
-          this.selectedTemplate = this.formConfig[i];
-          return this.formConfig[i].template;
+          this.selectedTemplate = this.formConfig[i]
+          return this.formConfig[i].template
         }
       }
     },
     // Recupero todas las templates almacenadas en MongoDB
     getPythonTemplates() {
       getAllPythonTemplates().then(response => {
-        this.formConfig = response.message;
-        console.log("List Python templates");
-        console.log(response.message);
-      });
+        this.formConfig = response.message
+        console.log('List Python templates')
+        console.log(response.message)
+      })
     },
     // valido los datos del ultimo paso del Wizard. Se validan en función de la template
     dataChanged(data) {
-      this.formValues = data;
-      if (this.$refs["builder"]) {
-        this.$refs["builder"].$children[0].validate(valid => {
+      this.formValues = data
+      if (this.$refs['builder']) {
+        this.$refs['builder'].$children[0].validate(valid => {
           if (valid) {
-            this.hasError = false;
+            this.hasError = false
           } else {
-            this.hasError = true;
+            this.hasError = true
           }
-        });
+        })
       }
     },
     // TODO: IMPORT NEW IMAGES
     openImportImageDialog() {
       getImagesFromGitlab().then(
         response => {
-          this.dataImageForm.imagesAvailable = response.message;
-          console.log(this.dataImageForm.imagesAvailable);
+          this.dataImageForm.imagesAvailable = response.message
+          console.log(this.dataImageForm.imagesAvailable)
         },
         error => {
-          console.log(error);
+          console.log(error)
         }
-      );
-      this.importImageDialog = true;
+      )
+      this.importImageDialog = true
     },
 
     closeImportImageDialog() {
-      this.importImageDialog = false;
-      this.dataImageForm.imageSelected = "";
+      this.importImageDialog = false
+      this.dataImageForm.imageSelected = ''
     },
 
     getImagesAvailable() {},
 
     async importImage() {
-      this.downloading = true;
-      console.log(this.dataImageForm.imageSelected);
+      this.downloading = true
+      console.log(this.dataImageForm.imageSelected)
       const body = {
         path: this.dataImageForm.imageSelected
-      };
+      }
 
       await downloadImage(body).then(
         response => {
-          console.log(response);
-          this.downloading = false;
-          this.closeImportImageDialog();
+          console.log(response)
+          this.downloading = false
+          this.closeImportImageDialog()
           this.$notify({
-            title: this.$t("common.success"),
-            message: this.$t("agentList.imageImported"),
-            type: "success",
+            title: this.$t('common.success'),
+            message: this.$t('agentList.imageImported'),
+            type: 'success',
             duration: 2000
-          });
+          })
         },
         error => {
-          console.log(error);
-          this.downloading = false;
-          this.closeImportImageDialog();
+          console.log(error)
+          this.downloading = false
+          this.closeImportImageDialog()
           this.$notify({
-            title: this.$t("common.error"),
+            title: this.$t('common.error'),
             message: error,
-            type: "error",
+            type: 'error',
             duration: 2000
-          });
+          })
         }
-      );
+      )
     },
 
     // Methods for DndList
     obtainDataModel_Properties() {
       if (this.activeStepWizard < 3) {
-        this.activeStepWizard++;
+        this.activeStepWizard++
       }
 
       if (this.activeStepWizard === 3) {
@@ -1402,184 +1412,184 @@ export default {
         // console.log('DATAMODEL')
         // console.log(this.selectDataModel)
         // Vacio la lista de campos disponibles
-        this.availableList = [];
-        this.mandatoryProperties = "";
-        this.jsonSchema = "";
-        this.jsonSchemaSerialized = "";
+        this.availableList = []
+        this.mandatoryProperties = ''
+        this.jsonSchema = ''
+        this.jsonSchemaSerialized = ''
 
         if (this.isPrivateRepository_dataModel) {
-          console.log("PRIVATE REPOSITORY");
+          console.log('PRIVATE REPOSITORY')
 
           var data = {
             projectName: this.projectName_dataModel,
             link: this.selectDataModel
-          };
+          }
 
           getJsonSchema(data).then(response => {
             // console.log(response)
-            this.jsonSchema = response.message;
-            var properties = this.jsonSchema.properties;
+            this.jsonSchema = response.message
+            var properties = this.jsonSchema.properties
             // console.log(properties)
 
-            var items = [];
+            var items = []
 
             for (var prop in properties) {
               // console.log(prop)
-              var val = properties[prop];
+              var val = properties[prop]
 
               items.push({
                 id: prop,
                 name: val.type
-              });
+              })
             }
 
-            this.availableList = items;
-            this.build_region_requiredProperties(this.jsonSchema.required);
+            this.availableList = items
+            this.build_region_requiredProperties(this.jsonSchema.required)
             this.jsonSchemaSerialized = this.buildDataSourceObject(
               items,
               false
-            );
+            )
             // console.log(this.jsonSchemaSerialized)
-          });
+          })
         } else {
-          console.log("PUBLIC REPOSITORY");
+          console.log('PUBLIC REPOSITORY')
           // Personal access token: D3-5YV3H1Zk7heVsnzX7
-          const url = this.selectDataModel;
-          const settings = { method: "Get" };
+          const url = this.selectDataModel
+          const settings = { method: 'Get' }
 
           fetch(url, settings)
             .then(res => res.json())
             .then(json => {
               // console.log(json)
-              this.jsonSchema = json;
+              this.jsonSchema = json
 
-              var items = this.jsonSchema.allOf.length;
+              var items = this.jsonSchema.allOf.length
               // console.log(items)
-              var properties = this.jsonSchema.allOf[items - 1];
+              var properties = this.jsonSchema.allOf[items - 1]
 
               // console.log(properties)
-              this.availableList = this.obtainProperties_Schema(properties);
-              this.build_region_requiredProperties(this.jsonSchema.required);
+              this.availableList = this.obtainProperties_Schema(properties)
+              this.build_region_requiredProperties(this.jsonSchema.required)
               this.jsonSchemaSerialized = this.buildDataSourceObject(
                 properties,
                 true
-              );
+              )
               // console.log(this.jsonSchemaSerialized)
-            });
+            })
         }
       }
     },
 
     recoverType_publicRepository(properties) {
-      var type = "";
+      var type = ''
       for (var i in properties) {
-        var key = i;
-        var val = properties[i];
+        var key = i
+        var val = properties[i]
 
         for (var j in val) {
-          var sub_key = j;
-          var sub_val = val[j];
+          var sub_key = j
+          var sub_val = val[j]
 
-          if (sub_key === "type") {
+          if (sub_key === 'type') {
             // console.log(sub_key)
             // console.log(sub_val.enum.toString())
-            type = sub_val.enum.toString();
+            type = sub_val.enum.toString()
           }
         }
       }
-      return type;
+      return type
     },
 
     buildDataSourceObject(properties, publicRepository) {
-      console.log("build data source");
-      var type = "";
-      var values = {};
+      console.log('build data source')
+      var type = ''
+      var values = {}
       if (publicRepository) {
-        console.log("PUBLIC");
-        type = this.recoverType_publicRepository(properties);
+        console.log('PUBLIC')
+        type = this.recoverType_publicRepository(properties)
 
         this.availableList.forEach(prop => {
-          if (prop.id !== "type" && prop.name.type !== undefined) {
-            values[prop.id] = prop.name.type;
+          if (prop.id !== 'type' && prop.name.type !== undefined) {
+            values[prop.id] = prop.name.type
           }
-        });
-        values["type"] = type;
+        })
+        values['type'] = type
       } else {
         // console.log(properties)
-        console.log("PRIVATE");
-        var splitted = [];
-        splitted = this.selectDataModel.split("/");
-        type = splitted[0];
+        console.log('PRIVATE')
+        var splitted = []
+        splitted = this.selectDataModel.split('/')
+        type = splitted[0]
 
         this.availableList.forEach(prop => {
-          if (prop.id !== "type") {
-            values[prop.id] = prop.name;
+          if (prop.id !== 'type') {
+            values[prop.id] = prop.name
           }
-        });
-        values["type"] = type;
+        })
+        values['type'] = type
       }
-      this.dataModelType = type;
+      this.dataModelType = type
 
       var datasource = {
-        id: "urn:ngsi-ld:DataSource:" + type,
-        type: "DataSource",
+        id: 'urn:ngsi-ld:DataSource:' + type,
+        type: 'DataSource',
         attributes: {},
         dataProvided: {
-          type: "StructuredValue",
+          type: 'StructuredValue',
           value: values,
           metadata: {}
         },
         description: {
-          type: "Text",
-          value: type + " data source",
+          type: 'Text',
+          value: type + ' data source',
           metadata: {}
         },
         onChain: {
-          type: "Boolean",
+          type: 'Boolean',
           value: false,
           metadata: {}
         },
         dataModels: {
-          type: "Text",
+          type: 'Text',
           value: this.selectDataModel,
           metadata: {}
         }
-      };
+      }
       // console.log(datasource)
-      return datasource;
+      return datasource
     },
 
     build_region_requiredProperties(requiredProperties) {
-      this.requiredProperties = requiredProperties;
+      this.requiredProperties = requiredProperties
 
-      var elements = "";
+      var elements = ''
       this.requiredProperties.forEach(prop => {
-        if (elements === "") {
-          elements = prop;
+        if (elements === '') {
+          elements = prop
         } else {
-          elements = elements + ", " + prop;
+          elements = elements + ', ' + prop
         }
-      });
+      })
       // console.log(items)
       this.mandatoryProperties =
-        this.$t("wizard.mandatoryProperties") + elements;
+        this.$t('wizard.mandatoryProperties') + elements
     },
 
     checkDataModelProperties(item) {
-      this.selectDataModel = item.link;
-      this.isPrivateRepository_dataModel = item.privateRepository;
-      this.projectName_dataModel = item.projectName;
+      this.selectDataModel = item.link
+      this.isPrivateRepository_dataModel = item.privateRepository
+      this.projectName_dataModel = item.projectName
     },
 
     obtainProperties_Schema(schema) {
-      var properties = [];
+      var properties = []
       for (var i in schema) {
-        var key = i;
-        var val = schema[i];
+        var key = i
+        var val = schema[i]
 
         for (var j in val) {
-          var sub_key = j;
-          var sub_val = val[j];
+          var sub_key = j
+          var sub_val = val[j]
           // console.log(sub_key)
           // console.log(sub_val)
 
@@ -1587,25 +1597,25 @@ export default {
             id: sub_key,
             name: sub_val
             // name: sub_key
-          });
+          })
         }
       }
-      return properties;
+      return properties
     },
     // PROGRESS BAR
     load() {
       setTimeout(() => {
-        this.percentage += 10;
+        this.percentage += 10
         if (this.percentage > 100) {
-          this.percentage = 100;
+          this.percentage = 100
         }
-      }, 0.5 * 750);
+      }, 0.5 * 750)
     },
     sleep(time) {
-      return new Promise(resolve => setTimeout(resolve, time));
+      return new Promise(resolve => setTimeout(resolve, time))
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

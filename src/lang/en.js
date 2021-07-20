@@ -1,6 +1,6 @@
 export default {
   route: {
-    overview: 'Overview'
+    overview: 'Log'
   },
   navbar: {
     dashboard: 'Dashboard',

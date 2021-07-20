@@ -1,6 +1,6 @@
 export default {
   'route': {
-    'overview': 'Visión general'
+    'overview': 'Log'
   },
   'navbar': {
     'dashboard': 'Tablero',
