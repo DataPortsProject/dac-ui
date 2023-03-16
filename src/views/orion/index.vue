@@ -4,7 +4,7 @@
       <el-tab-pane label="DATASOURCE">
         <DatasourceList />
       </el-tab-pane>
-      <el-tab-pane label="SUBSCRIPTION">
+      <el-tab-pane :label="$t('subscriptionList.title')">
         <SubscriptionList />
       </el-tab-pane>
     </el-tabs>
@@ -26,18 +26,16 @@ export default {
   name: 'Orion',
   data() {
     return {
-        bgc: {
-            backgroundColor: 'rgb(240,242,245)',
-            height: '100%',
-            width: '100%',
-            overflow: 'hidden',
-            position: 'absolute'
-        },
+      bgc: {
+        backgroundColor: 'rgb(240,242,245)',
+        height: '100%',
+        width: '100%',
+        overflow: 'hidden',
+        position: 'absolute'
+      },
       list: null
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-</style>

@@ -1,11 +1,12 @@
 // Define the constants needs for DataPorts
+const baseUrl = ((window.location.host || '').split(':') || [])[0] || 'localhost';
 export default {
-  // base URL of our API
-  baseURL_DAM_API: 'http://localhost:3000',
-  // base URL of our API for Linux deployment
-  // baseURL_DAM_API: 'http://dataports.prodevelop.es:3000',
-  // base URL API for on_demand endpoint
-  baseURL_API_ON_DEMAND: 'http://localhost:3000/on_demand',
+  // Use this setup if no KrakenD proxy used
+  //baseURL_DAM_API: `http://${baseUrl}:3000`,
+  //baseURL_API_ON_DEMAND: `http://${baseUrl}:3000/on_demand`,
+  // Use this stup if KrakenD configured
+  baseURL_DAM_API: `https://${baseUrl}:9000/dac`,
+  baseURL_API_ON_DEMAND: `https://${baseUrl}:9000/dac/on_demand`,
   // methods petition API
   METHOD_GET: 'GET',
   METHOD_POST: 'POST',
@@ -39,4 +40,4 @@ export default {
   SUCCESS_MESSAGE_TYPE: 'success',
   WARNING_MESSAGE_TYPE: 'warning',
   ERROR_MESSAGE_TYPE: 'error'
-}
+};

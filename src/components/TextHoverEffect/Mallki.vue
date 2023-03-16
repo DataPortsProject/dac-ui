@@ -36,11 +36,13 @@ export default {
   outline: none;
   text-decoration: none;
 }
+
 .link--mallki:hover {
   -webkit-transition: none;
   transition: none;
   color: transparent;
 }
+
 .link--mallki::before {
   content: "";
   width: 100%;
@@ -57,10 +59,12 @@ export default {
   -webkit-transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
   transition-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
 }
+
 .link--mallki:hover::before {
   -webkit-transform: translate3d(100%, 0, 0);
   transform: translate3d(100%, 0, 0);
 }
+
 .link--mallki span {
   position: absolute;
   height: 50%;
@@ -69,9 +73,9 @@ export default {
   top: 0;
   overflow: hidden;
 }
+
 .link--mallki span::before {
   content: attr(data-letters);
-  color: red;
   position: absolute;
   left: 0;
   width: 100%;
@@ -79,19 +83,23 @@ export default {
   -webkit-transition: -webkit-transform 0.5s;
   transition: transform 0.5s;
 }
+
 .link--mallki span:nth-child(2) {
   top: 50%;
 }
+
 .link--mallki span:first-child::before {
   top: 0;
   -webkit-transform: translate3d(0, 100%, 0);
   transform: translate3d(0, 100%, 0);
 }
+
 .link--mallki span:nth-child(2)::before {
   bottom: 0;
   -webkit-transform: translate3d(0, -100%, 0);
   transform: translate3d(0, -100%, 0);
 }
+
 .link--mallki:hover span::before {
   -webkit-transition-delay: 0.3s;
   transition-delay: 0.3s;
@@ -99,5 +107,4 @@ export default {
   transform: translate3d(0, 0, 0);
   -webkit-transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
   transition-timing-function: cubic-bezier(0.2, 1, 0.3, 1);
-}
-</style>
+}</style>

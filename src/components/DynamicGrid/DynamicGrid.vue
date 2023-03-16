@@ -13,7 +13,7 @@ function getDescriptor(item, size) {
   } else {
     const index = breakpoints.indexOf(size)
     if (index === -1) {
-      throw 'Invalid breakpoint'
+      throw new Error('Invalid breakpoint')
     }
     let lastBreakpoint = 'md'
     const mdIndex = breakpoints.indexOf('md')
@@ -25,15 +25,14 @@ function getDescriptor(item, size) {
         }
       }
     } else {
-      for (let i = 0; i < breakpoints.length; i++) {
-        const breakpoint = breakpoints[i]
+      for (const breakpoint of breakpoints) {
         if (item.hasOwnProperty(breakpoint)) {
           lastBreakpoint = breakpoint
         }
       }
     }
     if (!item.hasOwnProperty(lastBreakpoint)) {
-      throw 'No breakpoint descriptor found'
+      throw new Error('No breakpoint descriptor found')
     }
     return item[lastBreakpoint]
   }
@@ -120,12 +119,12 @@ export default {
   },
   beforeMount() {
     // Add missing layout entries for each slot
-    this.$slots.default.forEach(function(slot, index) {
+    this.$slots.default.forEach(function (slot, index) {
       if (slot.componentOptions !== undefined) {
         if (slot.componentOptions.propsData === undefined) {
           console.warn('[DynamicGrid] Attempted to add element without size descriptors, skipped')
         } else {
-          breakpoints.forEach(function(size) {
+          breakpoints.forEach(function (size) {
             const descriptor = getDescriptor(slot.componentOptions.propsData, size)
             this.layouts[size].push({
               x: descriptor[0],
@@ -161,7 +160,7 @@ export default {
   methods: {
     addElement(tagName, layouts, settings, childProps) {
       if (!this.isReady) {
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           // FiXME If we attempt to add elements before vue-grid-layout is rendered
           // for the first time, we get a JavaScript error message in the console...
           this.addElement(tagName, layouts, settings, childProps)
@@ -173,7 +172,7 @@ export default {
         settings,
         settingsLoaded: false
       })
-      breakpoints.forEach(function(size) {
+      breakpoints.forEach(function (size) {
         const descriptor = getDescriptor(layouts, size).slice()
         this.layouts[size].push({
           x: descriptor[0],
@@ -196,9 +195,9 @@ export default {
       }
       this.gridItems.splice(item.i, 1)
       this.items.splice(item.i, 1)
-      breakpoints.forEach(function(size) {
+      breakpoints.forEach(function (size) {
         this.layouts[size].splice(item.i, 1)
-        this.layouts[size].forEach(function(layout, i) {
+        this.layouts[size].forEach(function (layout) {
           if (layout.i > item.i) {
             layout.i--
           }
@@ -227,25 +226,25 @@ export default {
     clear() {
       this.gridItems = []
       this.items = []
-      breakpoints.forEach(function(size) {
+      breakpoints.forEach(function (size) {
         this.layouts[size] = []
       }, this)
       this.itemKey = 1
     },
     load(items) {
       this.clear()
-      items.forEach(function(item) {
+      items.forEach(function (item) {
         this.addElement(item.tagName, item.layouts, item.settings, item.childProps)
       }, this)
     },
     save() {
-      return this.gridItems.map(function(gridItem, index) {
+      return this.gridItems.map(function (gridItem, index) {
         const child = gridItem.componentOptions.children[0]
         const item = {
           tagName: child.componentOptions.tag,
           layouts: {}
         }
-        breakpoints.forEach(function(size) {
+        breakpoints.forEach(function (size) {
           const descriptor = this.layouts[size][index]
           item.layouts[size] = [descriptor.x, descriptor.y, descriptor.w, descriptor.h]
         }, this)
@@ -264,7 +263,7 @@ export default {
         this.$emit('update:size', size)
       }
       const me = this
-      window.matchMedia(condition).addListener(function(query) {
+      window.matchMedia(condition).addListener(function (query) {
         if (query.matches) {
           me.currentSize = size
           me.$emit('update:size', size)
@@ -275,12 +274,12 @@ export default {
   render(createElement) {
     // FIXME See note in addElement()
     if (!this.isReady) {
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.isReady = true
       })
     }
     // Create new items programatically here
-    itemsToAdd.forEach(function(item) {
+    itemsToAdd.forEach(function (item) {
       const component = createElement(item.tagName, (item.childProps !== undefined) ? { props: item.childProps } : {})
       const gridItem = createElement('grid-item', [component])
       this.gridItems.push(gridItem)
@@ -301,7 +300,7 @@ export default {
           useCssTransforms: false
         }
       },
-      this.gridItems.map(function(gridItem, index) {
+      this.gridItems.map(function (gridItem, index) {
         // Render replacement for virtual grid item component
         const item = this.items[index]; const layout = this.layout[index]
         const rowHeight = this.rowHeight; const numCols = this.numCols; const margin = this.margin
@@ -327,8 +326,8 @@ export default {
               }
             },
             nativeOn: {
-              blur(e) { el.context.selectElement(null) },
-              focus(e) { el.context.selectElement(el.componentInstance) }
+              blur(_e) { el.context.selectElement(null) },
+              focus(_e) { el.context.selectElement(el.componentInstance) }
             },
             props: layout,
             style: (layout.w + layout.h === 0) ? { display: 'none' } : {}
@@ -338,7 +337,7 @@ export default {
               {
                 class: { 'close-icon': true },
                 on: {
-                  click(e) { el.context.removeElement(el.componentInstance) }
+                  click(_e) { el.context.removeElement(el.componentInstance) }
                 },
                 style: (!this.editing) ? { display: 'none' } : {}
               },
@@ -348,7 +347,7 @@ export default {
           ])
         // Load saved data on next tick
         if (!item.settingsLoaded) {
-          this.$nextTick(function() {
+          this.$nextTick(function () {
             const instance = gridItem.componentOptions.children[0].componentInstance
             if (!item.settingsLoaded && instance !== undefined) {
               const loadFn = instance.load
@@ -369,33 +368,38 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vue-grid-item > * {
-	height: 100%;
-	width: 100%;
+.vue-grid-item>* {
+  height: 100%;
+  width: 100%;
 }
+
 .vue-grid-item:focus {
-	background-color: red;
+  background-color: red;
 }
-.vue-grid-item:focus > * {
-	opacity: 0.8;
+
+.vue-grid-item:focus>* {
+  opacity: 0.8;
 }
-.vue-grid-item.vue-resizable > * {
-	pointer-events: none;
+
+.vue-grid-item.vue-resizable>* {
+  pointer-events: none;
 }
-.vue-grid-item > .close-icon {
-	top: 3px;
-	box-sizing: border-box;
-	cursor: pointer;
-	height: 12px;
-	padding: 0 3px 3px 0;
-	pointer-events: all;
-	position: absolute;
-	right: 0;
-	width: 12px;
-	z-index: 1;
+
+.vue-grid-item>.close-icon {
+  top: 3px;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 12px;
+  padding: 0 3px 3px 0;
+  pointer-events: all;
+  position: absolute;
+  right: 0;
+  width: 12px;
+  z-index: 1;
 }
-.vue-grid-item.vue-resizable > span.vue-resizable-handle {
-	pointer-events: all;
-	z-index: 1;
+
+.vue-grid-item.vue-resizable>span.vue-resizable-handle {
+  pointer-events: all;
+  z-index: 1;
 }
 </style>

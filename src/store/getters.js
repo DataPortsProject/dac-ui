@@ -14,5 +14,5 @@ const getters = {
   errorLogs: state => state.errorLog.logs,
   getResources: state => state.resources, // added for gridEditor
   getSocketMessage: state => state.socket.message // added for Socket notifications
-}
-export default getters
+};
+export default getters;

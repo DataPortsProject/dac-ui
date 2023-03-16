@@ -25,7 +25,7 @@ export default {
         backgroundColor: 'rgb(240,242,245)',
         height: '100%',
         width: '100%',
-        overflow: 'hidden',
+        overflow: 'scroll',
         position: 'absolute'
       },
       list: null
@@ -33,6 +33,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

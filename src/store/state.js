@@ -1,4 +1,3 @@
-
 // Defining the state data here
 export default {
   resources: {},
@@ -8,4 +7,4 @@ export default {
     message: '',
     reconnectError: false
   }
-}
+};

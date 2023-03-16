@@ -1,10 +1,10 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from 'vue';
+import Router from 'vue-router';
 
 Vue.use(Router);
 
 /* Layout */
-import Layout from "@/layout";
+import Layout from '@/layout';
 
 /* Router Modules */
 /*
@@ -41,101 +41,105 @@ import nestedRouter from './modules/nested'*/
  */
 export const constantRoutes = [
   {
-    path: "/redirect",
+    path: '/redirect',
     component: Layout,
     hidden: true,
     children: [
       {
-        path: "/redirect/:path*",
-        component: () => import("@/views/redirect/index")
+        path: '/redirect/:path*',
+        component: () => import('@/views/redirect/index')
       }
     ]
   },
   {
-    path: "/login",
-    component: () => import("@/views/login/index"),
+    path: '/login',
+    component: () => import('@/views/login/index'),
     hidden: true
   },
   {
-    path: "/auth-redirect",
-    component: () => import("@/views/login/auth-redirect"),
+    path: '/auth-redirect',
+    component: () => import('@/views/login/auth-redirect'),
     hidden: true
   },
   {
-    path: "/404",
-    component: () => import("@/views/error-page/404"),
+    path: '/404',
+    component: () => import('@/views/error-page/404'),
     hidden: true
   },
   {
-    path: "/401",
-    component: () => import("@/views/error-page/401"),
+    path: '/401',
+    component: () => import('@/views/error-page/401'),
     hidden: true
   },
   {
-    path: "/",
+    path: '/',
     component: Layout,
-    redirect: "/overview",
+    redirect: '/overview',
     children: [
       {
-        path: "overview",
-        component: () => import("@/views/overview/index"),
-        name: "overview",
-        meta: { title: "overview", icon: "table", affix: true }
+        path: 'overview',
+        component: () => import('@/views/overview/index'),
+        name: 'overview',
+        meta: { title: 'overview', icon: 'table', affix: true, requiresAuth: true }
       }
-    ]
+    ],
+    meta: { requiresAuth: true }
   },
   {
-    path: "/profile",
+    path: '/profile',
     component: Layout,
-    redirect: "/profile/index",
+    redirect: '/profile/index',
     hidden: true,
     children: [
       {
-        path: "index",
-        component: () => import("@/views/profile/index"),
-        name: "Profile",
-        meta: { title: "profile", icon: "user", noCache: true }
+        path: 'index',
+        component: () => import('@/views/profile/index'),
+        name: 'Profile',
+        meta: { title: 'profile', icon: 'user', noCache: true, requiresAuth: true }
       }
-    ]
+    ],
+    meta: { requiresAuth: true }
   }
 ];
 
 export const asyncRoutes = [
   {
-    path: "/agents",
+    path: '/agents',
     component: Layout,
     children: [
       {
-        path: "agents",
-        component: () => import("@/views/agents/index"),
-        name: "Agents",
-        meta: { title: "Agents", icon: "form", affix: false }
+        path: 'agents',
+        component: () => import('@/views/agents/index'),
+        name: 'Agents',
+        meta: { title: 'Agents', icon: 'form', affix: false, requiresAuth: true }
       }
-    ]
+    ],
+    meta: { requiresAuth: true }
   },
   {
-    path: "/orion",
+    path: '/orion',
     component: Layout,
     children: [
       {
-        path: "orion",
-        component: () => import("@/views/orion/index"),
-        name: "Orion",
-        meta: { title: "Orion", icon: "chart", affix: false }
+        path: 'orion',
+        component: () => import('@/views/orion/index'),
+        name: 'Orion',
+        meta: { title: 'Orion', icon: 'chart', affix: false, requiresAuth: true }
       }
-    ]
+    ],
+    meta: { requiresAuth: true }
   },
-  { path: "*", redirect: "/404", hidden: true },
+  { path: '*', redirect: '/404', hidden: true },
   {
-    path: "/dataports",
+    path: '/dataports',
     beforeEnter() {
-      window.open("https://dataports-project.eu/", "_blank");
+      window.open('https://dataports-project.eu/', '_blank');
     }
   },
   {
-    path: "/prodevelop",
+    path: '/prodevelop',
     beforeEnter() {
-      window.open("https://www.prodevelop.es/", "_blank");
+      window.open('https://www.prodevelop.es/', '_blank');
     }
   }
 ];

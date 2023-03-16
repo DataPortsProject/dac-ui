@@ -42,7 +42,11 @@ export default {
       gutters: ['CodeMirror-lint-markers'],
       theme: 'rubyblue',
       lint: true,
-      readOnly: 'nocursor'
+      readOnly: true,
+      smartIndent: true,
+      lineSeparator: '\n',
+      noHScroll: false,
+      fixedGutter: false,
     })
     this.jsonEditor.setValue(JSON.stringify(this.value, null, 2))
     this.jsonEditor.on('change', cm => {
@@ -59,21 +63,26 @@ export default {
 </script>
 
 <style scoped>
-.json-editor{
+.json-editor {
   height: 300px;
   position: relative;
-  overflow: scroll; /* Horizontal and vertical scrollbar*/
+  overflow: scroll;
+  /* Horizontal and vertical scrollbar*/
 }
-.json-editor >>> .CodeMirror {
+
+.json-editor>>>.CodeMirror {
   height: auto;
   min-height: 300px;
 }
-.json-editor >>> .CodeMirror-scroll{
+
+.json-editor>>>.CodeMirror-scroll {
   min-height: 300px;
 }
-.json-editor >>> .cm-s-rubyblue span.cm-string {
+
+.json-editor>>>.cm-s-rubyblue span.cm-string {
   color: #F08047;
 }
+
 /* Sobreescribo algunas clases css */
 .cm-s-rubyblue.CodeMirror {
   color: black !important;

@@ -10,6 +10,10 @@ WORKDIR /app
 # copiar 'package.json' y 'package-lock.json' (si están disponibles)
 COPY package*.json ./
 
+ENV WEBSOCKET_HOST localhost
+
+ENV WEBSOCKET_PORT 3010
+
 # instalar dependencias del proyecto
 RUN apk add --no-cache git
 
@@ -18,6 +22,8 @@ RUN apk add --no-cache python
 RUN npm install -g node-gyp
 
 RUN apk add --virtual build-dependencies build-base gcc wget git
+
+RUN git config --global url."https://".insteadOf git://
 
 RUN npm install
 

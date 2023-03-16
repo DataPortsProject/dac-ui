@@ -1,8 +1,8 @@
-import Mock from 'mockjs'
-import { deepClone } from '../../src/utils/index.js'
-import { asyncRoutes, constantRoutes } from './routes.js'
+import Mock from 'mockjs';
+import { deepClone } from '../../src/utils/index.js';
+import { asyncRoutes, constantRoutes } from './routes.js';
 
-const routes = deepClone([...constantRoutes, ...asyncRoutes])
+const routes = deepClone([...constantRoutes, ...asyncRoutes]);
 
 const roles = [
   {
@@ -15,25 +15,28 @@ const roles = [
     key: 'editor',
     name: 'editor',
     description: 'Normal Editor. Can see all pages except permission page',
-    routes: routes.filter(i => i.path !== '/permission')// just a mock
+    routes: routes.filter(i => i.path !== '/permission') // just a mock
   },
   {
     key: 'visitor',
     name: 'visitor',
-    description: 'Just a visitor. Can only see the home page and the document page',
-    routes: [{
-      path: '',
-      redirect: 'dashboard',
-      children: [
-        {
-          path: 'dashboard',
-          name: 'Dashboard',
-          meta: { title: 'dashboard', icon: 'dashboard' }
-        }
-      ]
-    }]
+    description:
+      'Just a visitor. Can only see the home page and the document page',
+    routes: [
+      {
+        path: '',
+        redirect: 'dashboard',
+        children: [
+          {
+            path: 'dashboard',
+            name: 'Dashboard',
+            meta: { title: 'dashboard', icon: 'dashboard' }
+          }
+        ]
+      }
+    ]
   }
-]
+];
 
 export default [
   // mock get all routes form server
@@ -44,7 +47,7 @@ export default [
       return {
         code: 20000,
         data: routes
-      }
+      };
     }
   },
 
@@ -56,7 +59,7 @@ export default [
       return {
         code: 20000,
         data: roles
-      }
+      };
     }
   },
 
@@ -95,4 +98,4 @@ export default [
       }
     }
   }
-]
+];

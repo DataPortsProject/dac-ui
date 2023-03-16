@@ -2,10 +2,10 @@
   <div>
     <div class="app-container" :style="bgc">
       <el-tabs type="border-card" dark slider-color="green" centered color="green">
-        <el-tab-pane label="IMAGES">
+        <el-tab-pane :label="$t('agentList.title')">
           <AgentList />
         </el-tab-pane>
-        <el-tab-pane label="INSTANCES">
+        <el-tab-pane :label="$t('containerList.title')">
           <ContainerList />
         </el-tab-pane>
       </el-tabs>
@@ -30,7 +30,7 @@ export default {
         backgroundColor: 'rgb(240,242,245)',
         height: '100%',
         width: '100%',
-        overflow: 'hidden',
+        overflow: 'scroll',
         position: 'absolute'
       },
       list: null
@@ -39,5 +39,3 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>

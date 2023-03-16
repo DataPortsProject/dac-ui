@@ -1,35 +1,17 @@
 <template>
   <div class="login-container">
-    <el-form
-      ref="loginForm"
-      :model="loginForm"
-      :rules="loginRules"
-      class="login-form"
-      autocomplete="on"
-      label-position="left"
-    >
-      <!--<div id="notFound">
-      </div>-->
-
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on"
+      label-position="left">
       <div class="title-container">
-        <img :src="require('../../assets/login_images/logo.png')" class="center title" />
-        <!--<h3 class="title">{{ $t('login.title') }}</h3>-->
-        <!--<lang-select class="set-language" />-->
+        <img :src="require('../../assets/login_images/logo.png')" class="center title" alt="">
       </div>
 
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          :placeholder="$t('login.username')"
-          name="username"
-          type="text"
-          tabindex="1"
-          autocomplete="on"
-        />
+        <el-input ref="username" v-model="loginForm.username" :placeholder="$t('login.username')" name="username"
+          type="text" tabindex="1" autocomplete="on" />
       </el-form-item>
 
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
@@ -37,105 +19,73 @@
           <span class="svg-container">
             <svg-icon icon-class="password" />
           </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            :placeholder="$t('login.password')"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
+          <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType"
+            :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
+            @keyup.native="checkCapslock" @blur="capsTooltip = false" @keyup.enter.native="handleLogin_KeyCloak" />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
       </el-tooltip>
 
-      <el-button
-        :loading="loading"
-        type="primary"
-        style="width:100%;margin-bottom:30px;"
-        @click.native.prevent="handleLogin"
-      >{{ $t('login.logIn') }}</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin_KeyCloak">{{ $t('login.logIn') }}</el-button>
 
-      <!--<div style="position:relative">
-        <div class="tips">
-          <span>{{ $t('login.username') }} : admin</span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">
-            {{ $t('login.username') }} : editor
-          </span>
-          <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
-        </div>
-      </div>-->
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
-      <br />
-      <br />
-      <br />
+      <br>
+      <br>
+      <br>
       <social-sign />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
-import LangSelect from "@/components/LangSelect";
+import LangSelect from '@/components/LangSelect'
 export default {
-  name: "Login",
+  name: 'Login',
+  // eslint-disable-next-line vue/no-unused-components
   components: { LangSelect },
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
-      } else {
-        callback();
-      }
-    };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error('The password can not be less than 6 digits'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       loginForm: {
-        username: "admin",
-        password: "111111"
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [
-          { required: true, trigger: "blur", validator: validateUsername }
+          { required: true, trigger: 'blur' }
+          // , validator: validateUsername
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword }
+          { required: true, trigger: 'blur', validator: validatePassword }
         ]
       },
-      passwordType: "password",
+      passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
       otherQuery: {}
-    };
+    }
   },
   watch: {
     $route: {
-      handler: function(route) {
-        const query = route.query;
+      handler: function (route) {
+        const query = route.query
         if (query) {
-          this.redirect = query.redirect;
-          this.otherQuery = this.getOtherQuery(query);
+          this.redirect = query.redirect
+          this.otherQuery = this.getOtherQuery(query)
         }
       },
       immediate: true
@@ -145,10 +95,10 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.username === "") {
-      this.$refs.username.focus();
-    } else if (this.loginForm.password === "") {
-      this.$refs.password.focus();
+    if (this.loginForm.username === '') {
+      this.$refs.username.focus()
+    } else if (this.loginForm.password === '') {
+      this.$refs.password.focus()
     }
   },
   destroyed() {
@@ -158,84 +108,102 @@ export default {
     checkCapslock({ shiftKey, key } = {}) {
       if (key && key.length === 1) {
         if (
-          (shiftKey && (key >= "a" && key <= "z")) ||
-          (!shiftKey && (key >= "A" && key <= "Z"))
+          (shiftKey && (key >= 'a' && key <= 'z')) ||
+          (!shiftKey && (key >= 'A' && key <= 'Z'))
         ) {
-          this.capsTooltip = true;
+          this.capsTooltip = true
         } else {
-          this.capsTooltip = false;
+          this.capsTooltip = false
         }
       }
-      if (key === "CapsLock" && this.capsTooltip === true) {
-        this.capsTooltip = false;
+      if (key === 'CapsLock' && this.capsTooltip === true) {
+        this.capsTooltip = false
       }
     },
     showPwd() {
-      if (this.passwordType === "password") {
-        this.passwordType = "";
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
       } else {
-        this.passwordType = "password";
+        this.passwordType = 'password'
       }
       this.$nextTick(() => {
-        this.$refs.password.focus();
-      });
+        this.$refs.password.focus()
+      })
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true;
+          this.loading = true
+          console.log(this.otherQuery)
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch('user/login', this.loginForm)
             .then(() => {
               this.$router.push({
-                path: this.redirect || "/",
+                path: this.redirect || '/',
                 query: this.otherQuery
-              });
-              this.loading = false;
+              })
+              this.loading = false
             })
             .catch(() => {
-              this.loading = false;
-            });
+              this.loading = false
+            })
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
+    },
+    handleLogin_KeyCloak() {
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          const data = {
+            username: this.loginForm.username,
+            password: this.loginForm.password
+          }
+          console.log('DATA: ', data)
+
+          this.$store
+            .dispatch('user/login_Keycloak', data)
+            .then((response) => {
+              if (response.message !== null) {
+                this.$router.push({
+                  path: this.redirect || '/',
+                  query: this.otherQuery
+                })
+                this.loading = false
+              } else {
+                this.$message({
+                  message: 'User without access permissions',
+                  type: 'error'
+                })
+                this.loading = false
+              }
+            })
+            .catch(() => {
+              this.loading = false
+            })
+
+        } else {
+          console.log('error submit!!')
+          console.log('Not valid user')
+          return false
+        }
+      })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== "redirect") {
-          acc[cur] = query[cur];
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
         }
-        return acc;
-      }, {});
+        return acc
+      }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
-};
+}
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
 $bg: #283443;
 $light_gray: #fff;
 $cursor: #fff;

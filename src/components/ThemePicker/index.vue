@@ -1,10 +1,7 @@
 <template>
-  <el-color-picker
-    v-model="theme"
-    :predefine="['#409EFF', '#1890ff', '#304156','#212121','#11a983', '#13c2c2', '#6959CD', '#f5222d', ]"
-    class="theme-picker"
-    popper-class="theme-picker-dropdown"
-  />
+  <el-color-picker v-model="theme"
+    :predefine="['#409EFF', '#1890ff', '#304156', '#212121', '#11a983', '#13c2c2', '#6959CD', '#f5222d',]"
+    class="theme-picker" popper-class="theme-picker-dropdown" />
 </template>
 
 <script>
@@ -25,7 +22,7 @@ export default {
   },
   watch: {
     defaultTheme: {
-      handler: function(val, oldVal) {
+      handler: function (val, _oldVal) {
         this.theme = val
       },
       immediate: true
@@ -47,8 +44,8 @@ export default {
 
       const getHandler = (variable, id) => {
         return () => {
-          const originalCluster = this.getThemeCluster(ORIGINAL_THEME.replace('#', ''))
-          const newStyle = this.updateStyle(this[variable], originalCluster, themeCluster)
+          const _originalCluster = this.getThemeCluster(ORIGINAL_THEME.replace('#', ''))
+          const newStyle = this.updateStyle(this[variable], _originalCluster, themeCluster)
 
           let styleTag = document.getElementById(id)
           if (!styleTag) {

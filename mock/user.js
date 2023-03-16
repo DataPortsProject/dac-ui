@@ -1,4 +1,3 @@
-
 const tokens = {
   admin: {
     token: 'admin-token'
@@ -6,7 +5,7 @@ const tokens = {
   editor: {
     token: 'editor-token'
   }
-}
+};
 
 const users = {
   'admin-token': {
@@ -21,7 +20,7 @@ const users = {
     avatar: 'https://picsum.photos/500',
     name: 'Normal Editor'
   }
-}
+};
 
 export default [
   // user login
@@ -29,44 +28,51 @@ export default [
     url: '/user/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
+      const { username } = config.body;
+      const token = tokens[username];
 
       // mock error
       if (!token) {
         return {
           code: 60204,
           message: 'Account and password are incorrect.'
-        }
+        };
       }
 
       return {
         code: 20000,
         data: token
-      }
+      };
     }
   },
 
   // get user info
   {
-    url: '/user/info\.*',
+    url: '/user/info.*',
     type: 'get',
     response: config => {
-      const { token } = config.query
-      const info = users[token]
+      const { token } = config.query;
+      const info = users[token];
+
+      if (/(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/.test(token)) { // checks for jwt
+        return {
+          code: 20000,
+          data: users['admin-token']
+        };
+      }
 
       // mock error
       if (!info) {
         return {
           code: 50008,
           message: 'Login failed, unable to get user details.'
-        }
+        };
       }
 
       return {
         code: 20000,
         data: info
-      }
+      };
     }
   },
 
@@ -78,7 +84,7 @@ export default [
       return {
         code: 20000,
         data: 'success'
-      }
+      };
     }
   }
-]
+];

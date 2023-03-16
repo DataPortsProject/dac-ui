@@ -12,16 +12,11 @@ export function getZIPTemplate(templateFeatures) {
   return request({
     url: '/pythonTemplate/getZIPTemplate',
     method: constants.METHOD_POST,
-	  data: templateFeatures,
-	  headers: {
-		'Content-Type': 'application/json',
-    'Accept': 'application/json'
-	  },
+    data: templateFeatures,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
     responseType: 'arraybuffer'
   });
 }
-
-
-
-
-

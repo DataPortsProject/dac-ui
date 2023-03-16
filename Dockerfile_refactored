@@ -1,0 +1,43 @@
+FROM node:14.15.4-alpine as builder
+#FROM node:16.19.0-alpine as builder
+#FROM node:18.14.0-alpine as builder
+
+# instalar un simple servidor http para servir nuestro contenido estático
+RUN npm install -g http-server
+
+# hacer la carpeta 'app' el directorio de trabajo actual
+WORKDIR /app
+
+# copiar 'package.json'
+COPY package.json ./
+
+ARG WEBSOCKET_HOST="localhost"
+
+ARG WEBSOCKET_PORT 3010
+
+# instalar dependencias del proyecto
+RUN apk add --no-cache git && \
+  git config --global url."https://".insteadOf git:// &&\
+  apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+
+RUN npm install --force
+
+# copiar los archivos y carpetas del proyecto al directorio de trabajo actual (es decir, la carpeta 'app')
+COPY *.js ./
+COPY public/ ./public/
+COPY mock/ ./mock/
+COPY static/ ./static/
+COPY src/ ./src/
+
+# construir aplicación para producción minificada
+RUN npm run build:prod
+
+FROM nginx:1.23.3-alpine
+
+COPY  --from=builder /app/dist /usr/share/nginx/html
+COPY ./nginx_conf/dataports.conf /etc/nginx/conf.d/
+COPY ./nginx_conf/cert.key ./nginx_conf/cert.crt /etc/ssl/certs/
+
+# CMD [ "http-server", "dist" ]
+
+LABEL MAINTAINER jclemente@prodevelop.es

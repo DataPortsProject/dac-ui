@@ -1,11 +1,11 @@
-import request from '@/utils/request_API'
-import constants from '../utils/constants'
+import request from '@/utils/request_API';
+import constants from '../utils/constants';
 
 export function getAllDataModels() {
   return request({
     url: '/dataModel',
     method: constants.METHOD_GET
-  })
+  });
 }
 
 export function getJsonSchema(data) {
@@ -17,5 +17,5 @@ export function getJsonSchema(data) {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     }
-  })
+  });
 }

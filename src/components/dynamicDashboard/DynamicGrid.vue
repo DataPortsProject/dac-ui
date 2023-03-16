@@ -81,9 +81,9 @@ export default {
       }
       this.gridItems.splice(item.i, 1)
       this.items.splice(item.i, 1)
-      breakpoints.forEach(function(size) {
+      breakpoints.forEach(function (size) {
         this.layouts[size].splice(item.i, 1)
-        this.layouts[size].forEach(function(layout, i) {
+        this.layouts[size].forEach(function (layout, _i) {
           if (layout.i > item.i) {
             layout.i--
           }
@@ -113,7 +113,7 @@ export default {
   render(createElement) {
     // FIXME See note in addElement()
     if (!this.isReady) {
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.isReady = true
       })
     }
@@ -131,7 +131,7 @@ export default {
           useCssTransforms: false
         }
       },
-      this.gridItems.map(function(gridItem, index) {
+      this.gridItems.map(function (gridItem, index) {
         // Render replacement for virtual grid item component
         const item = this.items[index]; const layout = this.layout[index]
         const rowHeight = this.rowHeight; const numCols = this.numCols; const margin = this.margin
@@ -157,8 +157,8 @@ export default {
               }
             },
             nativeOn: {
-              blur(e) { el.context.selectElement(null) },
-              focus(e) { el.context.selectElement(el.componentInstance) }
+              blur(_) { el.context.selectElement(null) },
+              focus(_) { el.context.selectElement(el.componentInstance) }
             },
             props: layout,
             style: (layout.w + layout.h === 0) ? { display: 'none' } : {}
@@ -168,7 +168,7 @@ export default {
               {
                 class: { 'close-icon': true },
                 on: {
-                  click(e) { el.context.removeElement(el.componentInstance) }
+                  click(_) { el.context.removeElement(el.componentInstance) }
                 },
                 style: (!this.editing) ? { display: 'none' } : {}
               },
@@ -178,7 +178,7 @@ export default {
           ])
         // Load saved data on next tick
         if (!item.settingsLoaded) {
-          this.$nextTick(function() {
+          this.$nextTick(function () {
             const instance = gridItem.componentOptions.children[0].componentInstance
             if (!item.settingsLoaded && instance !== undefined) {
               const loadFn = instance.load
@@ -199,33 +199,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.vue-grid-item > * {
-	height: 100%;
-	width: 100%;
+.vue-grid-item>* {
+  height: 100%;
+  width: 100%;
 }
+
 .vue-grid-item:focus {
-	background-color: red;
+  background-color: red;
 }
-.vue-grid-item:focus > * {
-	opacity: 0.8;
+
+.vue-grid-item:focus>* {
+  opacity: 0.8;
 }
-.vue-grid-item.vue-resizable > * {
-	pointer-events: none;
+
+.vue-grid-item.vue-resizable>* {
+  pointer-events: none;
 }
-.vue-grid-item > .close-icon {
-	top: 3px;
-	box-sizing: border-box;
-	cursor: pointer;
-	height: 12px;
-	padding: 0 3px 3px 0;
-	pointer-events: all;
-	position: absolute;
-	right: 0;
-	width: 12px;
-	z-index: 1;
+
+.vue-grid-item>.close-icon {
+  top: 3px;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 12px;
+  padding: 0 3px 3px 0;
+  pointer-events: all;
+  position: absolute;
+  right: 0;
+  width: 12px;
+  z-index: 1;
 }
-.vue-grid-item.vue-resizable > span.vue-resizable-handle {
-	pointer-events: all;
-	z-index: 1;
-}
-</style>
+
+.vue-grid-item.vue-resizable>span.vue-resizable-handle {
+  pointer-events: all;
+  z-index: 1;
+}</style>

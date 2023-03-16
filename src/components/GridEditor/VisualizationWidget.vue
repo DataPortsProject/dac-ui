@@ -2,12 +2,10 @@
   <div :style="getStyle">
     <div v-if="!preview" class="preview" @click="editImage = !editImage">
       <el-tooltip v-if="!editImage" class="item" effect="dark" :content="$t('dashboard.editURL')" placement="top-start">
-        <i class="el-icon-edit" />
+        <em class="el-icon-edit" />
       </el-tooltip>
-      <i v-else="!editImage" class="el-icon-close" />
-      <!--<i v-if="!editImage" class="fa fa-pencil" aria-hidden="true" />-->
+      <em v-else="!editImage" class="el-icon-close" />
 
-      <!--<i v-else="!editImage" class="fa fa-times" aria-hidden="true" />-->
     </div>
     <input v-if="editImage" v-model="item.location" type="text" class="edit" @blur="save">
   </div>
@@ -39,13 +37,14 @@ export default {
 </script>
 
 <style scoped>
-  .preview {
-    position: absolute;
-    left: 4px;
-    top: 2px;
-  }
-  .edit {
-    padding-left: 20px;
-    width: 100%;
-  }
+.preview {
+  position: absolute;
+  left: 4px;
+  top: 2px;
+}
+
+.edit {
+  padding-left: 20px;
+  width: 100%;
+}
 </style>

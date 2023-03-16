@@ -55,10 +55,3 @@ export function getLog(id, since) {
     method: constants.METHOD_GET
   });
 }
-/*
-export function deleteImageById(id) {
-	return request({
-	  url: '/images/' + id,
-	  method: constants.METHOD_DELETE
-	})
-}*/

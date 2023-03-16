@@ -1,25 +1,32 @@
-import request from '@/utils/request_API'
-import constants from '../utils/constants'
+import request from '@/utils/request_API';
+import constants from '../utils/constants';
 
 export function getInfoList() {
   return request({
     url: '/info',
     method: constants.METHOD_GET
-  })
+  });
 }
 
-export function deleteInfoByRandom_Id(id) {
+export function deleteInfoByRandomId(id) {
   return request({
-	  url: '/info/' + id,
-	  method: constants.METHOD_DELETE
-  })
+    url: '/info/' + id,
+    method: constants.METHOD_DELETE
+  });
+}
+
+export function deleteInfoByContainerName(containerName) {
+  return request({
+    url: '/info/container/' + containerName,
+    method: constants.METHOD_DELETE
+  });
 }
 
 export function getInfoByRandom_Id(id) {
   return request({
-	  url: '/info/' + id,
-	  method: constants.METHOD_GET
-  })
+    url: '/info/' + id,
+    method: constants.METHOD_GET
+  });
 }
 
 export function createInfoRegister(data) {
@@ -31,5 +38,5 @@ export function createInfoRegister(data) {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     }
-  })
+  });
 }

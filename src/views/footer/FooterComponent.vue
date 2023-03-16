@@ -1,19 +1,11 @@
 <template>
-<div>
-  <div class="app-container footer-container">
-    <span class="footer-content"
-      >This project has received funding from European Union's Horizon 2020
-      research an innovation programme under grant agreement No 871493</span
-    >
-  </div>
-  <!-- <div class="img-container">
-    <img
-      class="footer-img"
-      src="../../assets/dataports_images/europe_flag.png"
-    />
-  </div> -->
+  <div>
+    <div class="app-container footer-container">
+      <span class="footer-content">This project has received funding from European Union's Horizon 2020
+        research an innovation programme under grant agreement No 871493</span>
+    </div>
 
-</div>
+  </div>
 </template>
 
 <script>

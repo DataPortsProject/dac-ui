@@ -5,34 +5,20 @@
         <el-tooltip class="item" effect="dark" :content="$t('dashboard.editText')" placement="top-start">
           <i class="el-icon-more" />
         </el-tooltip>
-        <!--<i class="fa fa-ellipsis-v" aria-hidden="true" />-->
-        <!--class="btn-group btn-group-sm"-->
       </span>
-      <div
-        v-for="(heading, key) in item.headings"
-        v-if="!preview && hVisible"
-        style="position:relative;display:inline-flex;vertical-align:middle;"
-        title="Change Heading"
-        @click="changeToHeading({headingKey: key})"
-      >
+      <div v-for="(heading, key) in item.headings" v-if="!preview && hVisible"
+        style="position:relative;display:inline-flex;vertical-align:middle;" title="Change Heading"
+        @click="changeToHeading({ headingKey: key })">
         <el-button size="small" type="primary" style="cursor: pointer;">
           {{ key }}
         </el-button>
-        <!--<button type="button" class="btn btn-primary" style="cursor: pointer;"> {{ key }} </button>-->
       </div>
     </div>
-    <div
-      :id="item.i"
-      v-model="item.title"
-      :contenteditable="contenteditable"
-      style="padding:6px 10px;"
-      :class="[{ 'heading1': item.headings.h1,
-                 'heading2': item.headings.h2,
-                 'heading3': item.headings.h3,
-      }]"
-      @paste.prevent="pasteData"
-      @blur="save"
-    >
+    <div :id="item.i" v-model="item.title" :contenteditable="contenteditable" style="padding:6px 10px;" :class="[{
+      'heading1': item.headings.h1,
+      'heading2': item.headings.h2,
+      'heading3': item.headings.h3,
+    }]" @paste.prevent="pasteData" @blur="save">
       {{ item.title }}
     </div>
   </div>
@@ -53,7 +39,7 @@ export default {
       'saveItem'
     ]),
     changeToHeading(data) {
-      const updatedHeadingSelection = map(this.item.headings, (item, key) => key === data.headingKey)
+      const updatedHeadingSelection = map(this.item.headings, (_item, key) => key === data.headingKey)
       this.saveHeadings({ values: updatedHeadingSelection, itemIndex: this.itemIndex })
     },
     save(e) {
@@ -65,7 +51,7 @@ export default {
 </script>
 
 <style scoped>
-  [contenteditable]:focus {
-    outline: 0px solid transparent;
-  }
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+}
 </style>
